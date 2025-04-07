@@ -1,0 +1,32 @@
+:host {
+    display: block;
+    padding: 16px;
+  }
+  
+  .w-full {
+    width: 100%;
+  }
+  
+  table {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .mat-mdc-card {
+    padding: 16px;
+  }
+  
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .mat-mdc-form-field {
+    margin-bottom: 16px;
+  }
+
+  .mat-mdc-card-actions {
+    justify-content: flex-end;
+  }

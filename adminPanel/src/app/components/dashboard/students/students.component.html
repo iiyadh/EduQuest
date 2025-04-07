@@ -1,0 +1,63 @@
+<!-- student-list.component.html -->
+<mat-card class="mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title>Students List</mat-card-title>
+    </mat-card-header>
+  
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Filter students</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+  
+      <table mat-table [dataSource]="dataSource" class="w-full">
+        <!-- Username Column -->
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef> Username </th>
+          <td mat-cell *matCellDef="let student"> 
+            <strong>{{student.username}}</strong>
+          </td>
+        </ng-container>
+  
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let student"> 
+            <a href="mailto:{{student.email}}" class="text-blue-500 hover:underline">
+              {{student.email}}
+            </a>
+          </td>
+        </ng-container>
+  
+        <!-- Department Column -->
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef> Department</th>
+          <td mat-cell *matCellDef="let student" class="font-mono text-sm">
+            {{student.department}}
+          </td>
+        </ng-container>
+  
+        <!-- Formations Column -->
+        <ng-container matColumnDef="formations">
+          <th mat-header-cell *matHeaderCellDef> Formations </th>
+          <td mat-cell *matCellDef="let student"> 
+            <span *ngIf="student.formations.length > 0; else noFormations">
+              {{student.formations.length}} enrolled
+            </span>
+            <ng-template #noFormations>
+              <span class="text-gray-400">None</span>
+            </ng-template>
+            <button mat-icon-button color="primary" (click)="viewFormations(student)">
+              <mat-icon>info</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+  
+      <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
+    </mat-card-content>
+  </mat-card>

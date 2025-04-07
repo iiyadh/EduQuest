@@ -1,0 +1,24 @@
+<form class="authForm">
+    <h1>Login</h1>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Username</mat-label>
+      <input type="email" matInput [formControl]="userFormControl" [errorStateMatcher]="matcher">
+      <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+      @if (userFormControl.hasError('required')) {
+        <mat-error>Username is <strong>required</strong></mat-error>
+      }
+    </mat-form-field>
+
+
+    <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" [errorStateMatcher]="matcher" [formControl]="passwordFormControl"/>
+        @if (passwordFormControl.hasError('required')) {
+            <mat-error>Password is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+      <button mat-button class="btn" (click)="Login()">Login</button>
+
+  </form>
+  

@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Formations for {{data.username}}</h2>
+<mat-dialog-content>
+  <mat-list>
+    <mat-list-item *ngFor="let formation of data.formations">
+      <mat-icon matListItemIcon>school</mat-icon>
+      <div matListItemTitle>{{formation}}</div>
+    </mat-list-item>
+    <mat-list-item *ngIf="data.formations.length === 0">
+      <mat-icon matListItemIcon>info</mat-icon>
+      <div matListItemTitle>No formations enrolled</div>
+    </mat-list-item>
+  </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

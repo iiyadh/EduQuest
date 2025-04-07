@@ -1,0 +1,26 @@
+<mat-toolbar>
+    <h1>Admin Panel</h1>
+    <span class="example-spacer"></span>
+    <div class="links">
+        <button mat-icon-button class="example-icon" aria-label="Example icon-button with heart icon" (click)="toggleState('studentlist')">
+            <mat-icon>format_align_justify</mat-icon> <span>Students List</span> 
+        </button>
+        <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="toggleState('courseslist')">
+            <mat-icon>featured_play_list</mat-icon> <span>Courses List</span> 
+        </button>
+
+        <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="toggleState('departementlist')">
+            <mat-icon>view_list</mat-icon> <span>Departement List</span> 
+        </button>
+
+        <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="toggleState('statslist')">
+            <mat-icon>bar_chart</mat-icon> <span>Statistics</span> 
+            
+        </button>
+
+        <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="Loggout()">
+            <mat-icon>logout</mat-icon> <span>Logout</span> 
+        </button>
+        
+    </div>
+</mat-toolbar>

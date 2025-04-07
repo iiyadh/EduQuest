@@ -1,0 +1,88 @@
+<mat-card class="mat-elevation-z8">
+    <mat-card-header>
+      <mat-card-title>Departments Management</mat-card-title>
+    </mat-card-header>
+  
+    <mat-card-content>
+      <!-- Add New Department Form -->
+      <div class="add-form">  
+        <button mat-raised-button color="primary" (click)="addDepartment()">
+          <mat-icon>add</mat-icon> Add Department
+        </button>
+      </div>
+  
+      <!-- Departments Table -->
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let department">
+            <div *ngIf="!department.isEditing; else editName">
+              {{ department.name }}
+            </div>
+            <ng-template #editName>
+              <mat-form-field appearance="outline">
+                <input matInput [(ngModel)]="department.name" required>
+              </mat-form-field>
+            </ng-template>
+          </td>
+        </ng-container>
+  
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef> Description </th>
+          <td mat-cell *matCellDef="let department">
+            <div *ngIf="!department.isEditing; else editDescription">
+              {{ department.description }}
+            </div>
+            <ng-template #editDescription>
+              <mat-form-field appearance="outline" class="w-full">
+                <textarea matInput [(ngModel)]="department.description" rows="2"></textarea>
+              </mat-form-field>
+            </ng-template>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="theme">
+          <th mat-header-cell *matHeaderCellDef> Theme </th>
+          <td mat-cell *matCellDef="let department">
+            <div *ngIf="!department.isEditing; else editName">
+              {{ department.name }}
+            </div>
+            <ng-template #editName>
+              <mat-form-field appearance="outline">
+                <input matInput [(ngModel)]="department.theme" required>
+              </mat-form-field>
+            </ng-template>
+          </td>
+        </ng-container>
+  
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let department">
+            <div *ngIf="!department.isEditing; else editActions">
+              <button mat-icon-button color="primary" (click)="startEdit(department)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteDepartment(department)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <ng-template #editActions>
+              <button mat-icon-button color="primary" (click)="saveEdit(department)">
+                <mat-icon>save</mat-icon>
+              </button>
+              <button mat-icon-button (click)="cancelEdit(department)">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </ng-template>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>

@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Contact.module.css';
+import axios from 'axios';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
-    message: ''
+    content: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,16 +26,17 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log(formData);
     
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await axios.post("/adminreport",formData);
       setSubmitMessage('Thank you for your message! We will get back to you soon.');
       setFormData({
         name: '',
         email: '',
         subject: '',
-        message: ''
+        content: ''
       });
     } catch (error) {
       setSubmitMessage('There was an error submitting your message. Please try again.');
@@ -96,11 +98,11 @@ const ContactPage = () => {
               </div>
 
               <div className={styles.formGroup}>
-                <label htmlFor="message">Message</label>
+                <label htmlFor="content">Message</label>
                 <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
+                  id="content"
+                  name="content"
+                  value={formData.content}
                   onChange={handleChange}
                   rows="6"
                   required

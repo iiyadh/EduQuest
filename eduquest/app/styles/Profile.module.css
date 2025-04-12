@@ -134,6 +134,9 @@
   box-shadow: 0 4px 8px rgba(74, 222, 128, 0.2);
 }
 
+.courseCard{
+  max-height: 300px;
+}
 /* Theme indicators */
 .courseCard[data-theme="PS"] {
   border-left-color: #4cc9f0;

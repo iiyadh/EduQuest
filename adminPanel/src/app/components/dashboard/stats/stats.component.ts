@@ -6,13 +6,14 @@ import { forkJoin } from 'rxjs';
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
+import { InboxComponent } from "./inbox/inbox.component";
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective,InboxComponent],
   templateUrl: './stats.component.html',
   styleUrl: './stats.component.scss'
 })

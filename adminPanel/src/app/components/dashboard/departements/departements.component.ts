@@ -82,7 +82,7 @@ export class DepartementsComponent implements OnInit {
 
   saveEdit(department: any) {
     department.isEditing = false;
-    this.departementsService.updateDepartment(department).subscribe(data => this.loadData);
+    this.departementsService.updateDepartment({_id :department._id ,name: department.name, description: department.description, theme:department.theme}).subscribe(data => this.loadData);
     delete department.originalData;
   }
 
@@ -97,7 +97,8 @@ export class DepartementsComponent implements OnInit {
     this.startEdit(this.newDepartment);
     this.newDepartment = {
       name: '',
-      description: ''
+      description: '',
+      theme:''
     };
   }
 

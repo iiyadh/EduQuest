@@ -4,7 +4,7 @@ import ContactPage from './Contact';
 import ProfilePage from './Profile';
 import HomeComp from './HomeComp';
 
-const Content = ({section}) => {
+const Content = ({section , setSection}) => {
     return (
         <>
         { !section && (
@@ -14,8 +14,7 @@ const Content = ({section}) => {
               <h1>Transform Your Learning Experience</h1>
               <p>Join thousands of students advancing their careers with our interactive courses</p>
               <div className={styles.heroButtons}>
-                <a href="/courses" className={styles.primaryButton}>Browse Courses</a>
-                <a href="/demo" className={styles.secondaryButton}>View Demo</a>
+                <button onClick={()=>setSection("profile")} className={styles.primaryButton}>Browse Courses</button>
               </div>
             </div>
             <div className={styles.heroImage}>

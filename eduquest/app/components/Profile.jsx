@@ -1,63 +1,51 @@
 "use client"
-import { useEffect } from 'react';
+import { useEffect ,useState} from 'react';
 import styles from '../styles/Profile.module.css';
+import useAuthStore from '../stores/authStore';
+import axios from 'axios';
+import useFormationStore from '../stores/formationStore';
 
 const ProfilePage = () => {
-  const courses = [
-    {
-      _id: "67e981408c19b52381c7f85a",
-      title: "Python Course",
-      description: "Master Python programming from basics to advanced concepts including OOP, data structures, and algorithms.",
-      theme: "PS",
-      students: [],
-      codeformation: "2AL08W"
-    },
-    {
-      _id: "67e981408c19b52381c7f85b",
-      title: "JavaScript Fundamentals",
-      description: "Learn the basics of JavaScript including variables, loops, functions, and DOM manipulation.",
-      theme: "WD",
-      students: [],
-      codeformation: "3JS01A"
-    },
-    {
-      _id: "67e981408c19b52381c7f85c",
-      title: "Web Design with HTML & CSS",
-      description: "Create beautiful, responsive websites with modern HTML5, CSS3, and Flexbox/Grid layouts.",
-      theme: "WD",
-      students: [],
-      codeformation: "3WD02C"
-    },
-    {
-      _id: "67e981408c19b52381c7f85d",
-      title: "Data Structures in C++",
-      description: "Understand core data structures such as arrays, linked lists, stacks, queues, and trees.",
-      theme: "CS",
-      students: [],
-      codeformation: "4CS15B"
-    },
-    {
-      _id: "67e981408c19b52381c7f85e",
-      title: "Database Management Systems",
-      description: "Explore relational databases, SQL queries, normalization, transactions, and indexing.",
-      theme: "DB",
-      students: [],
-      codeformation: "5DB10D"
-    }
-  ];
 
+
+  axios.defaults.baseURL = "http://127.0.0.1:8000";
+
+
+  const  { myFormations ,fetchMyFormations ,quitFormation}  = useFormationStore();
+
+  const {user} = useAuthStore();
+  const [userData,setUserData] = useState({});
   // Set animation delays for course cards
   useEffect(() => {
     const cards = document.querySelectorAll(`.${styles.courseCard}`);
     cards.forEach((card, index) => {
       card.style.setProperty('--order', index);
     });
+
+
+    const fetchUserData = async ()=>{
+      try{
+        const res = await axios.get(`/student/${user.id._id}`);
+        setUserData(res.data);
+      }catch(err){
+        console.log(err);
+      }
+    }
+
+    fetchUserData();
+    fetchMyFormations(user);
   }, []);
+
+
+  const handleUnsub = (course)=>{
+    quitFormation(course,user);
+    window.location.href = "/home";
+  }
 
   return (
     <div className={styles.profileContainer}>
       <div className={styles.hero}>
-        <h1>John Doe</h1>
+        <h1>{userData.username}</h1>
         <p>
           Your journey to knowledge begins here. At EduQuest, we believe learning should be inspiring, 
           accessible, and tailored to your goals. Whether you're exploring new skills, diving deeper 
@@ -67,7 +55,7 @@ const ProfilePage = () => {
       </div>
       
       <div className={styles.coursesCards}>
-        {courses.map((course) => (
+        {myFormations.map((course) => (
           <div 
             key={course._id} 
             className={styles.courseCard}
@@ -80,10 +68,12 @@ const ProfilePage = () => {
             </div>
             <div className={styles.actions}>
               <button className={`${styles.actionButton} ${styles.viewButton}`}>View Course</button>
-              <button className={`${styles.actionButton} ${styles.unsubscribeButton}`}>Unsubscribe</button>
+              <button className={`${styles.actionButton} ${styles.unsubscribeButton}`} onClick={()=>handleUnsub(course)}>Unsubscribe</button>
             </div>
           </div>
         ))}
+        {myFormations.length === 0 &&
+        (<h1>There is no courses yet</h1>)}
       </div>
     </div>
   );

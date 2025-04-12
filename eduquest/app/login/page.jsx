@@ -1,9 +1,10 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/Login.module.css';
 import axios from 'axios';
+import useAuthStore from '../stores/authStore';
 import { useRouter } from 'next/navigation';
 
 export default function Login() {
@@ -11,7 +12,17 @@ export default function Login() {
   axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 
-  const router = useRouter();
+  const {login} = useAuthStore();
+
+
+
+  useEffect(()=>{
+    const token = localStorage.getItem('token');
+      if(token){
+        router.push('/home');
+        return;
+      }
+  },[])
 
   const [formData, setFormData] = useState({
     email: '',
@@ -19,6 +30,8 @@ export default function Login() {
   });
 
   const [rememberMe, setRememberMe] = useState(false);
+
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,16 +41,15 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     try{
-      const res = await axios.post("/student/login",formData);
-      if (res.status === 200) {
-        console.log("Login successful:", res.data);
-        router.push("/home");
-      } else {
-        console.error("Login failed:", res.data);
+      const res = login(formData);
+
+      if(res !== false){
+        router.push('/home');
       }
+      
     } catch (error) {
       console.error("Error during login:", error);
     }

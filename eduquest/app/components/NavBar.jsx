@@ -6,8 +6,21 @@ import FileIcon from '../../public/add-svgrepo-com.svg';
 import ProfileIcon from '../../public/profile-round-1346-svgrepo-com.svg';
 import ContactIcon from '../../public/contact-us-svgrepo-com.svg';
 import LogoutIcon from '../../public/logout-svgrepo-com.svg';
+import useAuthStore from '../stores/authStore';
+import { useRouter } from 'next/navigation';
 
 const Navbar = ({setShowPopup,setSection})=>{
+
+  const { logout } = useAuthStore();
+  const router = useRouter();
+
+
+
+  const handleLogout = () =>{
+    logout();
+    router.push('/login');
+
+  }
     return(
         <header className={styles.header}>
         <div className={styles.headerContent}>
@@ -41,7 +54,7 @@ const Navbar = ({setShowPopup,setSection})=>{
                 </button>
               </li>
               <li>
-                <button href="/contact" className={styles.navLink}>
+                <button onClick={handleLogout} className={styles.navLink}>
                   <Image src={LogoutIcon} alt="Logout" className='icons' width={20} height={20} />
                   Logout
                 </button>

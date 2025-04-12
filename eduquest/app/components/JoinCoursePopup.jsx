@@ -1,7 +1,43 @@
-import React from 'react';
+"use client"
+import { useState } from 'react';
 import styles from '../styles/JoinCoursePopup.module.css';
+import useFormationStore from '../stores/formationStore';
+import useAuthStore from '../stores/authStore';
 
 const JoinCoursePopup = ({ onClose }) => {
+  const [courseCode, setCourseCode] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { enrollFormationByCode } = useFormationStore();
+  const { user } = useAuthStore();
+
+  const handleJoinCourse = async () => {
+    console.log(courseCode);
+    if (!courseCode.trim()) {
+      setError('Please enter a course code');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      await enrollFormationByCode(courseCode, user);
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to join course');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleJoinCourse();
+    }
+  };
+
   return (
     <div className={styles.popupOverlay}>
       <div className={styles.popupContent}>
@@ -18,9 +54,20 @@ const JoinCoursePopup = ({ onClose }) => {
             id="courseCode"
             className={styles.codeInput}
             placeholder="Enter course code"
+            value={courseCode}
+            onChange={(e) => setCourseCode(e.target.value)}
+            onKeyPress={handleKeyPress}
+            required
           />
+          {error && <p className={styles.errorMessage}>{error}</p>}
         </div>
-        <button className={styles.joinButton}>Join Course</button>
+        <button 
+          className={styles.joinButton} 
+          onClick={handleJoinCourse}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Joining...' : 'Join Course'}
+        </button>
       </div>
     </div>
   );

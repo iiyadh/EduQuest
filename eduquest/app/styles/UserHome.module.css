@@ -46,6 +46,16 @@
   transition: color 0.2s;
 }
 
+.sidebarNothing{
+  display: block;
+  padding: 0.75rem 0;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  transition: color 0.2s;
+}
+
 .sidebarLink:hover {
   color: #2563eb;
 }
@@ -127,24 +137,42 @@
 
 .heroButtons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .primaryButton, .secondaryButton {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .primaryButton {
   background-color: #2563eb;
   color: white;
+  border: none;
+}
+
+.primaryButton:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .secondaryButton {
-  border: 1px solid #2563eb;
+  border: 2px solid #2563eb;
   color: #2563eb;
+  background-color: transparent;
+}
+
+.secondaryButton:hover {
+  background-color: #eff6ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .heroImage {

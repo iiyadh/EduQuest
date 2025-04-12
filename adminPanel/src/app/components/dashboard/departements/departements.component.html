@@ -48,7 +48,7 @@
           <th mat-header-cell *matHeaderCellDef> Theme </th>
           <td mat-cell *matCellDef="let department">
             <div *ngIf="!department.isEditing; else editName">
-              {{ department.name }}
+              {{ department.theme }}
             </div>
             <ng-template #editName>
               <mat-form-field appearance="outline">

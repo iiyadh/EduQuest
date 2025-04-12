@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from '../styles/Signup.module.css';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import useAuthStore from '../stores/authStore';
 
 export default function SignUp() {
   axios.defaults.baseURL = "http://127.0.0.1:8000";
@@ -13,11 +14,21 @@ export default function SignUp() {
   const [departments,setDepartements] = useState([]);
   const router = useRouter();
 
+  const {checkAuth} = useAuthStore();
+
 
   useEffect(()=>{
+    const token = localStorage.getItem('token');
+    setTimeout(()=>{
+      if(token){
+        router.push('/home');
+        return;
+      }
+    },1000)
+    
     const fetchDep = async ()=>{
       try{
-        const res = await axios.get("/student/departments");
+        const res = await axios.get("/admin/alldepartement");
         setDepartements(res.data);
       }catch(err){
         console.log(err);

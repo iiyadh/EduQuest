@@ -70,6 +70,9 @@
 
 .courseCard p {
   color: #4b5563;
+  max-height: 100px;
+  overflow: hidden;
+  max-width: 100ch;
   line-height: 1.5;
   margin-bottom: 0;
 }

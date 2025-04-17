@@ -1,6 +1,7 @@
 import datetime
-from fastapi import FastAPI, Response, Request
+from fastapi import FastAPI, HTTPException, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
+import httpx
 import motor.motor_asyncio
 from passlib.context import CryptContext
 from bson import ObjectId
@@ -27,6 +28,12 @@ formations_collection = db.get_collection("formations")
 departments_collection = db.get_collection("departments")
 reports_collection = db.get_collection("reports")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+OPENROUTER_API_KEY = "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"
+HEADERS = {
+    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+    "Content-Type": "application/json",
+}
+
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
@@ -34,6 +41,31 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 def generateCode():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+
+async def call_openrouter_llm(prompt: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=HEADERS,
+            json={
+                "model": "google/gemini-2.0-flash-thinking-exp-1219:free",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are an expert course designer. Create structured content based on input.",
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
+            },
+        )
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"]
+    else:
+        raise HTTPException(status_code=500, detail="LLM call failed")
 
 
 @app.post("/student/register")
@@ -303,3 +335,152 @@ async def alldepartments():
     for d in departments:
         d["_id"] = str(d["_id"])
     return departments
+
+async def call_openrouter_llm(prompt: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=HEADERS,
+            json={
+                "model": "google/gemini-2.0-flash-thinking-exp-1219:free",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": """You are an Expert Course Designer with advanced knowledge in pedagogy, curriculum development, and instructional design. Your purpose is to create comprehensive, engaging, and pedagogically effective courses tailored to specific learning objectives and target audiences.
+                                Apply these core principles in all course designs:
+                                1. Learning-Centric: Prioritize measurable learning outcomes over content density
+                                2. Structured Pedagogy: Use proven instructional models (ADDIE, SAM, Backward Design)
+                                3. Adaptive Design: Customize content for the audience's knowledge level and context
+                                4. Practical Focus: Emphasize actionable knowledge with real-world applications
+                                5. Engagement: Incorporate multiple learning modalities and interactive elements
+
+                                For every course request, generate this complete structure:
+
+                                # [Course Title] 
+                                [Clear, compelling title reflecting course focus]
+
+                                ## Course Overview
+                                [2-3 paragraph description including:
+                                - Key learning value proposition
+                                - Why this knowledge/skill matters
+                                - High-level benefits for learners
+                                - Real-world applications]
+
+                                ## Target Audience
+                                [Precise description including:
+                                - Ideal learner profiles
+                                - Professional/experience level
+                                - Prior knowledge requirements
+                                - Specific needs this course addresses]
+
+                                ## Learning Objectives
+                                [List 3-5 SMART objectives formatted as:
+                                - "By course completion, learners will be able to [action verb] [specific outcome] [measurable criteria]"]
+
+                                ## Course Duration & Structure
+                                [Total learning hours with breakdown:
+                                - Suggested timeframe
+                                - Module/weekly structure
+                                - Estimated time per component
+                                - Flexible learning paths if applicable]
+
+                                ## Detailed Curriculum
+
+                                ### Module 1: [Title]
+                                **Objectives**: [Specific module-level outcomes]
+                                **Key Topics**:
+                                - [Topic 1]
+                                - [Topic 2]
+                                - [Topic 3]
+                                **Learning Activities**:
+                                - [Interactive elements: case studies, discussions, exercises]
+                                **Assessment**:
+                                - [Knowledge checks/skill demonstrations]
+                                **Resources**:
+                                - [Materials/references/tools]
+
+                                [Repeat module structure as needed...]
+
+                                ## Assessment Strategy
+                                **Formative Assessments**:
+                                - [Quizzes, reflections, peer reviews]
+                                **Summative Assessments**:
+                                - [Final project, exam, portfolio]
+                                **Feedback Mechanisms**:
+                                - [How learners receive evaluation]
+
+                                ## Instructional Resources
+                                - Primary materials
+                                - Supplementary readings
+                                - Tools/software requirements
+                                - Community/resources for continued learning
+
+                                ## Delivery Recommendations
+                                [Suggested formats:
+                                - Live vs. self-paced
+                                - Platform considerations
+                                - Optimal cohort size
+                                - Technical requirements]
+
+                                Format all output in clean Markdown with proper headings, bullet points, and consistent spacing for readability. Always begin by asking clarifying questions about learning goals, audience, and constraints before generating the full course structure.
+                        """
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
+            },
+        )
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"]
+    else:
+        raise HTTPException(status_code=500, detail="LLM call failed")
+
+
+
+@app.get("/generate/{id}")
+async def generate_course(id: str):
+
+    data = await formations_collection.find_one({"_id": ObjectId(id)})
+
+    data["_id"] = str(data["_id"])
+    del data["students"]
+    if not data:
+        return JSONResponse(content={"message": "Formation not found"}, status_code=404)
+    if "content" in data:
+        return data
+    
+    prompt =  f"""
+            Generate a comprehensive online course outline based on the following details:
+
+            **Course Title:** {data["title"]}
+            **Course Description:** {data["description"]}
+
+            The outline should include:
+            1. Course introduction and learning outcomes
+            2. 4-6 modules with clear objectives
+            3. 3-5 lessons per module with brief descriptions
+            4. Suggested activities or assessments
+            5. Estimated duration for each component
+
+            Format requirements:
+            - Use Markdown formatting
+            - Include headings (##, ###) for structure
+            - Use bullet points for lists
+            - Bold important concepts
+            - Ensure professional academic tone
+            """
+
+    content = await call_openrouter_llm(prompt)
+
+
+    formation = await formations_collection.find_one_and_update(
+        {"_id": ObjectId(data["_id"])},
+        {"$set": {"content": content}},
+        return_document=ReturnDocument.AFTER
+    )
+
+    del formation["students"]
+    del formation["_id"]
+    return formation

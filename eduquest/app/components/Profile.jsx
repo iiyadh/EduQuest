@@ -5,7 +5,7 @@ import useAuthStore from '../stores/authStore';
 import axios from 'axios';
 import useFormationStore from '../stores/formationStore';
 
-const ProfilePage = () => {
+const ProfilePage = ({ setSection}) => {
 
 
   axios.defaults.baseURL = "http://127.0.0.1:8000";
@@ -67,7 +67,7 @@ const ProfilePage = () => {
               <span>{course.codeformation}</span>
             </div>
             <div className={styles.actions}>
-              <button className={`${styles.actionButton} ${styles.viewButton}`}>View Course</button>
+              <button className={`${styles.actionButton} ${styles.viewButton}`} onClick={()=>setSection(course._id)}>View Course</button>
               <button className={`${styles.actionButton} ${styles.unsubscribeButton}`} onClick={()=>handleUnsub(course)}>Unsubscribe</button>
             </div>
           </div>

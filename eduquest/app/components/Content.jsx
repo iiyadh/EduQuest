@@ -3,6 +3,7 @@ import styles from '../styles/UserHome.module.css';
 import ContactPage from './Contact';
 import ProfilePage from './Profile';
 import HomeComp from './HomeComp';
+import CourseContent from '../components/CourseContent';
 
 const Content = ({section , setSection}) => {
     return (
@@ -45,8 +46,9 @@ const Content = ({section , setSection}) => {
         </main>
         )}
         {section === "contact" && (<ContactPage/>)}
-        {section === "profile" && (<ProfilePage/>)}
+        {section === "profile" && (<ProfilePage setSection={setSection}/>)}
         {section === "home" && (<HomeComp/>)}
+        {section && !["contact", "profile", "home"].includes(section) && <CourseContent section={section}/>}
         </>
       );
 };

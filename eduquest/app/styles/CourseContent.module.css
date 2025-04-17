@@ -1,0 +1,179 @@
+.courseContentContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .courseHeader {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .courseTitle {
+    font-size: 2.5rem;
+    color: #2b2d42;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #4361ee, #3f37c9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: slideInFromLeft 0.5s ease-out;
+  }
+  
+  .courseDescription {
+    font-size: 1.2rem;
+    color: #4b5563;
+    line-height: 1.6;
+    max-width: 800px;
+    animation: fadeIn 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+  
+  .contentWrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
+    opacity: 0;
+  }
+  
+  .markdownContent {
+    line-height: 1.8;
+    color: #374151;
+  }
+  
+  .markdownContent h2 {
+    color: #2b2d42;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+  
+  .markdownContent h3 {
+    color: #2b2d42;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+  
+  .markdownContent p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .markdownContent a {
+    color: #4361ee;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .markdownContent a:hover {
+    color: #3f37c9;
+    text-decoration: underline;
+  }
+  
+  .markdownContent pre {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .markdownContent code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    background: #f3f4f6;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #111827;
+  }
+  
+  .markdownContent ul,
+  .markdownContent ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+  }
+  
+  .markdownContent li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .markdownContent blockquote {
+    border-left: 4px solid #4361ee;
+    padding-left: 1rem;
+    margin-left: 0;
+    color: #4b5563;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+
+  .loading{
+    font-size: 2rem;
+    color: #2563eb;
+    text-align: center;
+    margin: 2rem 0;
+    animation: pulse 1.5s infinite;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .courseContentContainer {
+      padding: 1rem;
+    }
+    
+    .courseTitle {
+      font-size: 2rem;
+    }
+    
+    .courseDescription {
+      font-size: 1rem;
+    }
+    
+    .contentWrapper {
+      padding: 1.5rem;
+    }
+  }

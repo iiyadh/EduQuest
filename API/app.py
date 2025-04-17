@@ -260,12 +260,15 @@ async def get_formations():
     for formation in formations:
         formation["_id"] = str(formation["_id"])
         string_students = []
+        depIds = []
         for student in formation["students"]:
             stud = await student_collection.find_one({"_id": student})
             if stud:
                 string_students.append(stud["username"])
+                if "departmentId" in stud:
+                    depIds.append(str(stud["departmentId"]))
+        formation["departmentIds"] = depIds
         formation["students"] = string_students
-    print(formations)
     return formations
 
 
@@ -307,7 +310,7 @@ async def allstudents():
         if "departmentId" in student:
             department = await departments_collection.find_one({"_id": student["departmentId"]})
             student["department"] = department["name"] if department else None
-            student.pop("departmentId", None)
+            student["departmentId"] = str(student["departmentId"])
         if "formation" in student:
             formation_names = []
             for fid in student["formation"]:

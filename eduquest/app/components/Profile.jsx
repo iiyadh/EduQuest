@@ -1,82 +1,161 @@
 "use client"
-import { useEffect ,useState} from 'react';
+import { useState } from 'react';
+import React from 'react';
 import styles from '../styles/Profile.module.css';
-import useAuthStore from '../stores/authStore';
-import axios from 'axios';
-import useFormationStore from '../stores/formationStore';
 
-const ProfilePage = ({ setSection}) => {
+const ProfilePage = () => {
 
 
-  axios.defaults.baseURL = "http://127.0.0.1:8000";
 
+  const [editMode,setEditMode] = useState(false);
 
-  const  { myFormations ,fetchMyFormations ,quitFormation}  = useFormationStore();
+  const [editBio,setEditBio] = useState(false);
 
-  const {user} = useAuthStore();
-  const [userData,setUserData] = useState({});
-  // Set animation delays for course cards
-  useEffect(() => {
-    const cards = document.querySelectorAll(`.${styles.courseCard}`);
-    cards.forEach((card, index) => {
-      card.style.setProperty('--order', index);
-    });
-
-
-    const fetchUserData = async ()=>{
-      try{
-        const res = await axios.get(`/student/${user.id._id}`);
-        setUserData(res.data);
-      }catch(err){
-        console.log(err);
-      }
-    }
-
-    fetchUserData();
-    fetchMyFormations(user);
-  }, []);
-
-
-  const handleUnsub = (course)=>{
-    quitFormation(course,user);
-    window.location.href = "/home";
-  }
+  const [user,setUser] = useState({
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    joinedDate: 'January 15, 2022',
+    avatar: '/placeholder-avatar.jpg',
+    bio: 'Frontend developer and UI enthusiast. Building beautiful interfaces with React and CSS.',
+  });
 
   return (
-    <div className={styles.profileContainer}>
-      <div className={styles.hero}>
-        <h1>{userData.username}</h1>
-        <p>
-          Your journey to knowledge begins here. At EduQuest, we believe learning should be inspiring, 
-          accessible, and tailored to your goals. Whether you're exploring new skills, diving deeper 
-          into a subject, or preparing for a brighter future, our platform is designed to guide and 
-          support you every step of the way. Let's turn curiosity into achievement—one course at a time.
-        </p>
-      </div>
-      
-      <div className={styles.coursesCards}>
-        {myFormations.map((course) => (
-          <div 
-            key={course._id} 
-            className={styles.courseCard}
-            data-theme={course.theme}
-          >
-            <h3>{course.title}</h3>
-            <p>{course.description}</p>
-            <div className={styles.courseMeta}>
-              <span>{course.codeformation}</span>
+    <div className={styles.container}>
+      <div className={styles.profileWrapper}>
+        <div className={styles.sidebar}>
+          <div className={styles.card}>
+            <div className={styles.avatarContainer}>
+              <div className={styles.avatarLetter}>{user.name.substring(0, 3).toUpperCase()}</div>
             </div>
-            <div className={styles.actions}>
-              <button className={`${styles.actionButton} ${styles.viewButton}`} onClick={()=>setSection(course._id)}>View Course</button>
-              <button className={`${styles.actionButton} ${styles.unsubscribeButton}`} onClick={()=>handleUnsub(course)}>Unsubscribe</button>
+            <h2 className={styles.userName}>{user.name}</h2>
+            <p className={styles.userEmail}>{user.email}</p>
+          </div>
+        </div>
+
+        <div className={styles.mainContent}>
+          {editMode ? (
+            <div className={styles.card}>
+              <h2 className={styles.sectionTitle}>Edit Personal Information</h2>
+              <div className={styles.infoGroup}>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}>Full Name</label>
+                  <input
+                    type="text"
+                    className={styles.inputField}
+                    value={user.name}
+                    onChange={(e) => setUser({ ...user, name: e.target.value })}
+                  />
+                </div>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}>Email</label>
+                  <input
+                    type="email"
+                    className={styles.inputField}
+                    value={user.email}
+                    onChange={(e) => setUser({ ...user, email: e.target.value })}
+                  />
+                </div>
+                <div className={styles.infoItem}>
+                  <label className={styles.infoLabel}>Member Since</label>
+                  <p className={styles.readOnlyField}>{user.joinedDate}</p>
+                </div>
+              </div>
+              <div className={styles.buttonGroup}>
+                <button className={styles.saveButton} onClick={() => setEditMode(false)}>
+                  Save Changes
+                </button>
+                <button className={styles.cancelButton} onClick={() => setEditMode(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>Personal Information</h2>
+                <button
+                  className={styles.editButton}
+                  onClick={() => setEditMode(true)}
+                >
+                  Edit
+                </button>
+              </div>
+              <div className={styles.infoGroup}>
+                <div className={styles.infoItem}>
+                  <h3 className={styles.infoLabel}>Full Name</h3>
+                  <p className={styles.infoValue}>{user.name}</p>
+                </div>
+                <div className={styles.infoItem}>
+                  <h3 className={styles.infoLabel}>Email</h3>
+                  <p className={styles.infoValue}>{user.email}</p>
+                </div>
+                <div className={styles.infoItem}>
+                  <h3 className={styles.infoLabel}>Member Since</h3>
+                  <p className={styles.infoValue}>{user.joinedDate}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>About Me</h2>
+             {!editBio &&
+              <button
+              className={styles.editButton}
+              onClick={() => setEditBio(true)}
+            >
+              Edit
+            </button>} 
+            </div>
+
+            {editBio ? (
+              
+              (<>
+                <textarea
+                  className={styles.bioArea}
+                  value={user.bio}
+                  onChange={(e) => setUser({ ...user, bio: e.target.value })}
+                />
+                <div className={styles.buttonGroup}>
+                  <button className={styles.saveButton} onClick={() => setEditBio(false)}>
+                    Save Changes
+                  </button>
+                  <button className={styles.cancelButton} onClick={() => setEditBio(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+              )
+            ) : (
+              <p className={styles.userBio}>{user.bio}</p>
+            )}
+          </div>
+
+          <div className={styles.card}>
+            <h2 className={styles.sectionTitle}>Preferences</h2>
+            <div className={styles.preferences}>
+              <div className={styles.preferenceItem}>
+                <span>Dark Mode</span>
+                <label className={styles.switch}>
+                  <input type="checkbox" />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
+              <div className={styles.preferenceItem}>
+                <span>Email Notifications</span>
+                <label className={styles.switch}>
+                  <input type="checkbox" defaultChecked />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
             </div>
           </div>
-        ))}
-        {myFormations.length === 0 &&
-        (<h1>There is no courses yet</h1>)}
+        </div>
       </div>
     </div>
   );
 };
 
 export default ProfilePage;
+

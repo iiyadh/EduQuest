@@ -1,15 +1,15 @@
 import styles from '../styles/UserHome.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
-import HomeIcon from '../../public/home-1-svgrepo-com.svg';
-import FileIcon from '../../public/add-svgrepo-com.svg';
+import CourseIcon from '../../public/book.png';
 import ProfileIcon from '../../public/profile-round-1346-svgrepo-com.svg';
 import ContactIcon from '../../public/contact-us-svgrepo-com.svg';
+import HomeIcon from "../../public/home-1-svgrepo-com.svg";
 import LogoutIcon from '../../public/logout-svgrepo-com.svg';
 import useAuthStore from '../stores/authStore';
 import { useRouter } from 'next/navigation';
 
-const Navbar = ({setShowPopup,setSection})=>{
+const Navbar = ({setSection})=>{
 
   const { logout } = useAuthStore();
   const router = useRouter();
@@ -19,8 +19,8 @@ const Navbar = ({setShowPopup,setSection})=>{
   const handleLogout = () =>{
     logout();
     router.push('/login');
-
   }
+
     return(
         <header className={styles.header}>
         <div className={styles.headerContent}>
@@ -31,14 +31,14 @@ const Navbar = ({setShowPopup,setSection})=>{
             <ul className={styles.navList}>
               <li>
                 <button onClick={()=>setSection("home")} className={styles.navLink}>
-                  <Image src={HomeIcon} alt="Home" className='icons' width={20} height={20} />
-                  Home
+                  <Image src={CourseIcon} alt="Home" className='icons' width={20} height={20} />
+                  Courses
                 </button>
               </li>
               <li>
-                <button onClick={() => setShowPopup(true)} className={styles.navLink}>
-                  <Image src={FileIcon} alt="Join Course" className='icons' width={20} height={20} />
-                  Join Course
+                <button onClick={()=>setSection("mycourses")} className={styles.navLink}>
+                  <Image src={HomeIcon} alt="My Courses" className='icons' width={20} height={20} />
+                  My Courses
                 </button>
               </li>
               <li>

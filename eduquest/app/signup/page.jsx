@@ -11,31 +11,20 @@ export default function SignUp() {
 
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [departments,setDepartements] = useState([]);
+  const [departments,setDepartements] = useState([
+    {name:"Computer Science", _id:"1"},
+    {name:"Information Technology", _id:"2"},
+    {name:"Software Engineering", _id:"3"},
+    {name:"Data Science", _id:"4"},
+    {name:"Cyber Security", _id:"5"},
+    {name:"Artificial Intelligence", _id:"6"},
+    {name:"Web Development", _id:"7"},
+    {name:"Mobile Development", _id:"8"}
+  ]);
   const router = useRouter();
 
-  const {checkAuth} = useAuthStore();
-
-
-  useEffect(()=>{
-    const token = localStorage.getItem('token');
-    setTimeout(()=>{
-      if(token){
-        router.push('/home');
-        return;
-      }
-    },1000)
-    
-    const fetchDep = async ()=>{
-      try{
-        const res = await axios.get("/admin/alldepartement");
-        setDepartements(res.data);
-      }catch(err){
-        console.log(err);
-      }
-    }
-    fetchDep();
-  },[]);
+  const {register,checkAuth} = useAuthStore();
+  
 
   const [formData, setFormData] = useState({
     username: '',
@@ -54,20 +43,15 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      if(confirmedPassword !== formData.password){
-        setErrorMsg("Password Not Match !!!");
-        return;
-      }
-      const res = await axios.post("/student/register",formData);
-      if (res.status === 200) {
-        console.log("Register successful:", res.data);
-        router.push("/login");
-      }
-    } catch (error) {
-      setErrorMsg(error.response.data.message);
-    }
+    register(formData);
+    router.push('/home');
   };
+
+  useEffect(()=>{
+    if(checkAuth()){
+      router.push('/home');
+    }
+  },[])
 
   return (
       <div className={styles.signupContainer}>

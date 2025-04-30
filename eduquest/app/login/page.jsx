@@ -12,16 +12,14 @@ export default function Login() {
   axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 
-  const {login} = useAuthStore();
+  const {login,checkAuth} = useAuthStore();
 
 
 
   useEffect(()=>{
-    const token = localStorage.getItem('token');
-      if(token){
-        router.push('/home');
-        return;
-      }
+    if(checkAuth()){
+      router.push('/home');
+    }
   },[])
 
   const [formData, setFormData] = useState({
@@ -45,15 +43,23 @@ export default function Login() {
     e.preventDefault();
     try{
       const res = login(formData);
-
       if(res !== false){
         router.push('/home');
       }
-      
-    } catch (error) {
+    }catch (error) {
       console.error("Error during login:", error);
     }
-    console.log({ ...formData, rememberMe });
+    // try{
+    //   const res = login(formData);
+
+    //   if(res !== false){
+    //     router.push('/home');
+    //   }
+      
+    // } catch (error) {
+    //   console.error("Error during login:", error);
+    // }
+    // console.log({ ...formData, rememberMe });
   };
 
   return (

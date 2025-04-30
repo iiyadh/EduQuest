@@ -1,0 +1,134 @@
+/* Sidebar styles */
+.sidebar {
+    width: 280px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-right: 1px solid #e0e0e0;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+  }
+  
+  .sidebarContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .sidebarTitle {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .sidebarCourses {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .sidebarCourseItem {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    cursor: pointer;
+  }
+
+  .sidebarCourseItem:hover{
+    background-color: rgba(118, 144, 229, 0.337);
+  }
+  
+  .courseInfo {
+    margin-bottom: 12px;
+  }
+  
+  .courseTitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+  
+  .courseMeta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+  
+  .badge.beginner {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+  
+  .badge.intermediate {
+    background-color: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+  }
+  
+  .badge.advanced {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+  
+  .duration {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+  
+  .progressContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .progressBar {
+    flex-grow: 1;
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .progressFill {
+    height: 100%;
+    background-color: #4dabf7;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+  
+  .progressText {
+    font-size: 0.75rem;
+    color: #495057;
+    min-width: 30px;
+    text-align: right;
+  }
+  
+  .nextLesson {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+  
+  .sidebarNothing {
+    color: #868e96;
+    font-size: 0.9rem;
+    padding: 10px 0;
+    text-align: center;
+    font-style: italic;
+  }

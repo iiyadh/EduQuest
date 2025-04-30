@@ -3,7 +3,9 @@ import styles from '../styles/UserHome.module.css';
 import ContactPage from './Contact';
 import ProfilePage from './Profile';
 import HomeComp from './HomeComp';
-import CourseContent from '../components/CourseContent';
+import EnrolledCourses from './Mycourses';
+import StudyImg from '../../public/image.png';
+import Image from 'next/image';
 
 const Content = ({section , setSection}) => {
     return (
@@ -15,11 +17,11 @@ const Content = ({section , setSection}) => {
               <h1>Transform Your Learning Experience</h1>
               <p>Join thousands of students advancing their careers with our interactive courses</p>
               <div className={styles.heroButtons}>
-                <button onClick={()=>setSection("profile")} className={styles.primaryButton}>Browse Courses</button>
+                <button onClick={()=>setSection("home")} className={styles.primaryButton}>Browse Courses</button>
               </div>
             </div>
             <div className={styles.heroImage}>
-              {/* Placeholder for hero image */}
+              <Image src={StudyImg} className={styles.imageStudy} alt="just placeholder" />
             </div>
           </section>
     
@@ -46,9 +48,10 @@ const Content = ({section , setSection}) => {
         </main>
         )}
         {section === "contact" && (<ContactPage/>)}
-        {section === "profile" && (<ProfilePage setSection={setSection}/>)}
+        {section === "profile" && (<ProfilePage />)}
         {section === "home" && (<HomeComp/>)}
-        {section && !["contact", "profile", "home"].includes(section) && <CourseContent section={section}/>}
+        {section === "mycourses" && <EnrolledCourses setSection={setSection}/>}
+        {section && !["contact", "profile", "home","mycourses"].includes(section) && <CourseContent section={section}/>}
         </>
       );
 };

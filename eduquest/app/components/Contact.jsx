@@ -33,8 +33,6 @@ const ContactPage = () => {
       await axios.post("/adminreport",formData);
       setSubmitMessage('Thank you for your message! We will get back to you soon.');
       setFormData({
-        name: '',
-        email: '',
         subject: '',
         content: ''
       });
@@ -61,30 +59,6 @@ const ContactPage = () => {
         <div className={styles.contactContent}>
           <div className={styles.contactForm}>
             <form onSubmit={handleSubmit}>
-              <div className={styles.formGroup}>
-                <label htmlFor="name">Full Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="email">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
               <div className={styles.formGroup}>
                 <label htmlFor="subject">Subject</label>
                 <input

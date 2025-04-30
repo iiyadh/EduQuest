@@ -1,64 +1,55 @@
+"use client"
 import React from 'react';
-import styles from '../styles/UserHome.module.css';
-import useFormationStore from "../stores/formationStore";
+import  useCoursesStore  from '../stores/coursesStore';
+import styles from '../styles/Sidebar.module.css';
+import { useRouter } from 'next/navigation';
 
 const Sidebar = () => {
+  const { enrolledCourses, courses,calculateProgress  } = useCoursesStore();
+  const router = useRouter();
 
-  const { myFormations } = useFormationStore();
-  // const courses = [
-  //   {
-  //     _id: "67e981408c19b52381c7f85a",
-  //     title: "Python Course",
-  //     description: "Master Python programming from basics to advanced concepts including OOP, data structures, and algorithms.",
-  //     theme: "PS",
-  //     students: [],
-  //     codeformation: "2AL08W"
-  //   },
-  //   {
-  //     _id: "67e981408c19b52381c7f85b",
-  //     title: "JavaScript Fundamentals",
-  //     description: "Learn the basics of JavaScript including variables, loops, functions, and DOM manipulation.",
-  //     theme: "WD",
-  //     students: [],
-  //     codeformation: "3JS01A"
-  //   },
-  //   {
-  //     _id: "67e981408c19b52381c7f85c",
-  //     title: "Web Design with HTML & CSS",
-  //     description: "Create beautiful, responsive websites with modern HTML5, CSS3, and Flexbox/Grid layouts.",
-  //     theme: "WD",
-  //     students: [],
-  //     codeformation: "3WD02C"
-  //   },
-  //   {
-  //     _id: "67e981408c19b52381c7f85d",
-  //     title: "Data Structures in C++",
-  //     description: "Understand core data structures such as arrays, linked lists, stacks, queues, and trees.",
-  //     theme: "CS",
-  //     students: [],
-  //     codeformation: "4CS15B"
-  //   },
-  //   {
-  //     _id: "67e981408c19b52381c7f85e",
-  //     title: "Database Management Systems",
-  //     description: "Explore relational databases, SQL queries, normalization, transactions, and indexing.",
-  //     theme: "DB",
-  //     students: [],
-  //     codeformation: "5DB10D"
-  //   }
-  // ];
+  const enrolledCoursesWithProgress = enrolledCourses.map(courseId => {
+    const course = courses.find(c => c.id === courseId);
+    return {
+      ...course,
+      progress: Math.round(calculateProgress(courseId)),
+      nextLesson: course?.modules?.[0]?.lessons?.[0]?.title || "No lessons available"
+    };
+  });
 
-  
+  const handleGotoCourse = (id)=>{
+    console.log(id);
+    router.push(`/course/${id}`);
+  }
+
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebarContent}>
         <h2 className={styles.sidebarTitle}>My Courses</h2>
-        <ul className={styles.sidebarLinks}>
-          {myFormations.map(course => (
-            <li key={course._id}><a href="#" className={styles.sidebarLink}>{course.title}</a></li>
+        <ul className={styles.sidebarCourses}>
+          {enrolledCoursesWithProgress.map(course => (
+            <li key={course.id} className={styles.sidebarCourseItem} onClick={()=>handleGotoCourse(course.id)}>
+              <div className={styles.courseInfo}>
+                <h3 className={styles.courseTitle}>{course.title}</h3>
+              </div>
+              <div className={styles.progressContainer}>
+                <div className={styles.progressBar}>
+                  <div 
+                    className={styles.progressFill} 
+                    style={{ width: `${course.progress}%` }}
+                  ></div>
+                </div>
+                <span className={styles.progressText}>{course.progress}%</span>
+              </div>
+              <div className={styles.nextLesson}>
+                <span>Next: {course.nextLesson}</span>
+              </div>
+            </li>
           ))}
-          {myFormations.length === 0 &&
-          (<li className={styles.sidebarNothing}>No Subscribed courses</li>)}
+          {enrolledCoursesWithProgress.length === 0 && (
+            <li className={styles.sidebarNothing}>No enrolled courses</li>
+          )}
         </ul>
       </div>
     </aside>

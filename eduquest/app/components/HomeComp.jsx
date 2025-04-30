@@ -1,70 +1,102 @@
 "use client"
-import { useEffect,useState  } from "react";
-import styles from "../styles/Profile.module.css"
-import axios from "axios";
-import useAuthStore from "../stores/authStore";
-import useFormationStore from "../stores/formationStore";
+import { useEffect,useState } from "react"
+import styles from "../styles/HomeContent.module.css"
+import useCoursesStore from "../stores/coursesStore"
 
-const HomeComp = ()=>{
+const HomeComp = () => {
+  const { courses, fetchCourses, enrollInCourse, isEnrolled } = useCoursesStore();
 
-  axios.defaults.baseURL = "http://127.0.0.1:8000";
-
-  const [courses,setCourses] = useState([]);
-  const {user} = useAuthStore();
-
-  const {myFormations,enrollFormation,fetchMyFormations} = useFormationStore();
-
-
-
-
-
-  useEffect(()=>{
-    const fetchAllcourses = async()=>{
-      try{
-        const res = await axios.get(`/student/formations/${user.id.departmentId}`);
-        let filteredCourses = res.data.filter(course => 
-          !myFormations.some(myFormation => myFormation._id === course._id)
-        );
-        setCourses(filteredCourses);
-        console.log(res.data);
-      }catch(err){
-        console.log(err.response.data.message);
-      }
+  const [renderCourses, setRenderCourses] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  useEffect(() => {
+    if(courses.length <=0){
+      fetchCourses();
     }
-    fetchMyFormations();
-    fetchAllcourses();
-  },[])
-
-
+  }, []);
   
 
-  const handleSubscribe = (course) => {
-    enrollFormation(course,user);
-    setCourses(prevCourses => prevCourses.filter(courseItem => courseItem._id !== course._id));
+  useEffect(() => {
+    if (!searchTerm || searchTerm.length < 1) {
+      setRenderCourses([...courses]);
+      return;
+    }
+    
+    const filteredCourses = courses.filter(course =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setRenderCourses(filteredCourses);
+  }, [searchTerm, courses]);
+
+
+  const handleEnroll = (courseId) => {
+    enrollInCourse(courseId);
   }
 
-
-    return (
-        <div className={styles.coursesCards}>
-        {courses.map((course) => (
-          <div 
-            key={course._id} 
-            className={styles.courseCard}
-            data-theme={course.theme}
-          >
-            <h3>{course.title}</h3>
-            <p>{course.description}</p>
-            <div className={styles.courseMeta}>
-              <span>{course.codeformation}</span>
-            </div>
-            <div className={styles.actions}>
-              <button className={`${styles.actionButton} ${styles.subscribeButton}`} onClick={()=>handleSubscribe(course)}>Subscribe</button>
-            </div>
-          </div>
-        ))}
-        {courses.length === 0 && <h1>Nothing Is Here</h1>}
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.titleContainer}>
+          <h1 className={styles.title}>Courses</h1>
+          <p className={styles.subtitle}>Browse all available courses</p>
+        </div>
+        <div className={styles.searchContainer}>
+          <input
+            type="text"
+            placeholder="Search courses..."
+            value={searchTerm}
+            onChange={(e)=>setSearchTerm(e.target.value)}
+            className={styles.searchInput}
+          />
+          <svg className={styles.searchIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
       </div>
-    )
+
+      {renderCourses.length === 0 ? (
+        <h1 className={styles.noCoursesMessage}>Nothing Is Here</h1>
+      ) : (
+        <div className={styles.coursesGrid}>
+          {renderCourses.map((course) => (
+            <div
+              key={course.id}
+              className={styles.courseCard}
+            >
+              <div className={styles.courseContent}>
+                <div className={styles.courseHeader}>
+                  <h3 className={styles.courseTitle}>{course.title}</h3>
+                  <span className={`${styles.levelBadge} ${styles[course.level.toLowerCase()]}`}>
+                    {course.level}
+                  </span>
+                </div>
+                <p className={styles.courseCategory}>{course.category}</p>
+                <p className={styles.courseDescription}>{course.description}</p>
+                <div className={styles.courseDetails}>
+                  <span className={styles.courseDuration}> Duration : {course.duration}</span>
+                </div>
+                {!(isEnrolled(course.id))? 
+                (<button className={styles.enrollButton} onClick={() => handleEnroll(course.id)}>
+                  <svg className={styles.enrollIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2L2 7h20L12 2z"></path>
+                    <path d="M2 17l10 5 10-5V7H2v10z"></path>
+                    <path d="M12 12l4 4-4-4z"></path>
+                  </svg>
+                  Enroll
+                </button>) :
+                (<button className={styles.enrollButton} disabled>
+                  Already Enrolled
+                </button>)
+                }
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default HomeComp;

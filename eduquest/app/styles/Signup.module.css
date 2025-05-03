@@ -4,7 +4,8 @@
     align-items: center;
     height: 100vh;
     overflow: hidden;
-    background-color: #f5f7fa;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     padding: 2rem;
     font-family: 'Inter', sans-serif;
   }
@@ -71,14 +72,14 @@
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background-color: #f8f9fa;
-    color: #495057;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
   }
   
   .input:focus, .select:focus {
     outline: none;
-    border-color: #4361ee;
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.1);
   }
   
   .select {

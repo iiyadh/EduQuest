@@ -1,9 +1,10 @@
 /* Sidebar styles */
 .sidebar {
     width: 280px;
-    background: #f8f9fa;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
     padding: 20px;
-    border-right: 1px solid #e0e0e0;
+    border-right: 1px solid var(--border-color);
     height: 100vh;
     position: sticky;
     top: 0;
@@ -19,7 +20,7 @@
   .sidebarTitle {
     font-size: 1.2rem;
     margin-bottom: 20px;
-    color: #333;
+    color: var(--text-primary);
     font-weight: 600;
   }
   
@@ -33,15 +34,15 @@
   }
   
   .sidebarCourseItem {
-    background: white;
+    background-color: var(--card-bg);
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: var(--card-shadow);
     cursor: pointer;
   }
 
   .sidebarCourseItem:hover{
-    background-color: rgba(118, 144, 229, 0.337);
+    background-color: var(--accent-hover);
   }
   
   .courseInfo {

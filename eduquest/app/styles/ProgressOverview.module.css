@@ -3,17 +3,18 @@
   flex-direction: column;
   align-items: center;
   padding: 1.5rem;
-  background: white;
+  background-color: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
   max-width: 400px;
   margin: 0 auto;
+  color: var(--text-primary);
 }
 
 .progressTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
 }
 
@@ -22,6 +23,7 @@
   width: 180px;
   height: 180px;
   margin-bottom: 1.5rem;
+  background-color: var(--bg-secondary);
 }
 
 .circleBackground {
@@ -46,7 +48,7 @@
 .progressPercent {
   font-size: 2rem;
   font-weight: 700;
-  color: #4CAF50;
+  color: var(--success-text);
 }
 
 .progressStats {

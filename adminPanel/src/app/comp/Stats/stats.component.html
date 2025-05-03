@@ -1,0 +1,35 @@
+<div class="stats-container">
+    <h2>Academic Statistics Dashboard</h2>
+
+    <div class="chart-row">
+      <div class="chart-container">
+        <h3>Students per Department</h3>
+        <canvas baseChart
+          [data]="deptChartData"
+          [options]="chartOptions"
+          [type]="deptChartType">
+        </canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3>Students per Course</h3>
+        <canvas baseChart
+          [data]="courseChartData"
+          [options]="chartOptions"
+          [type]="courseChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-container">
+        <h3>Course Completion Ratio</h3>
+        <canvas baseChart
+          [data]="passFailChartData"
+          [options]="chartOptions"
+          [type]="passFailChartType">
+        </canvas>
+      </div>
+    </div>
+    
+</div>

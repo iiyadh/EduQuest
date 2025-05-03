@@ -1,45 +1,88 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class DepartementsService {
+export interface Student {
+  id: string;
+  name: string;
+  email: string;
+  isBlocked: boolean;
+}
 
-  constructor(private http : HttpClient) { }
+export interface Department {
+  id: string;
+  name: string;
+  description: string;
+  students: Student[];
+}
 
+@Injectable({ providedIn: 'root' })
+export class DepartmentsService {
 
-  departements: any[] = [];
+  private departements: Department[] = [
+    {
+      id: '1',
+      name: 'Computer Science',
+      description: 'Department of Computer Science and Engineering',
+      students: [
+        { id: 's1', name: 'Alice Smith', email: 'alice@example.com', isBlocked: false },
+        { id: 's2', name: 'Bob Johnson', email: 'bob@example.com', isBlocked: false }
+      ]
+    },
+    {
+      id: '2',
+      name: 'Mathematics',
+      description: 'Department of Mathematics',
+      students: [
+        { id: 's3', name: 'Charlie Brown', email: 'charlie@example.com', isBlocked: true }
+      ]
+    }
+  ];
 
-  getDepartments() {
-      return this.http.get("http://127.0.0.1:8000/admin/alldepartement").pipe(
-        tap((data: any) => this.departements = data)
-      );
+getAllDepartements(): Department[] {
+  return [...this.departements];
+}
+
+getDepartementById(id: string): Department | undefined {
+  return this.departements.find(dep => dep.id === id);
+}
+
+addDepartement(departement: Department): void {
+  this.departements.push(departement);
+}
+
+updateDepartement(id: string, updatedDepartement: Department): boolean {
+  const index = this.departements.findIndex(dep => dep.id === id);
+  if (index !== -1) {
+    this.departements[index] = updatedDepartement;
+    return true;
   }
+  return false;
+}
 
-  addDepartment(department: any) {
-    return this.http.post("http://127.0.0.1:8000/admin/adddepartment", department).pipe(
-      tap(() => this.departements.push(department))
-    );
+deleteDepartment(id: string): boolean {
+  const index = this.departements.findIndex(dep => dep.id === id);
+  if (index !== -1) {
+    this.departements.splice(index, 1);
+    return true;
   }
+  return false;
+}
 
-  updateDepartment(department: any) {
-    return this.http.put(`http://127.0.0.1:8000/admin/updatedepartment/${department._id}`, department).pipe(
-      tap(() => {
-        const index = this.departements.findIndex(dep => dep._id === department._id);
-        if (index !== -1) {
-          this.departements[index] = department;
-        }
-      })
-    );
-  }
 
-  deleteDepartment(id: string) {
-    return this.http.delete(`http://127.0.0.1:8000/admin/deletedepartment/${id}`).pipe(
-      tap(() => {
-        this.departements = this.departements.filter(dep => dep._id !== id);
-      })
-    );
+getAllStudentsFromDepartement(departmentId: string): Student[] {
+    const departement = this.departements.find(dep => dep.id === departmentId);
+    if (!departement) {
+        throw new Error(`Departement with id ${departmentId} not found.`);
+    }
+    return [...departement.students];
+}
+
+blockStudent(studentId: string): void {
+  for (let dep of this.departements) {
+    const student = dep.students.find(s => s.id === studentId);
+    if (student) {
+      student.isBlocked = true;
+      return;
+    }
   }
+}
 }

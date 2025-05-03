@@ -1,23 +1,28 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from '../styles/Profile.module.css';
 
 const ProfilePage = () => {
+  const [editMode, setEditMode] = useState(false);
+  const [editBio, setEditBio] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-
-
-  const [editMode,setEditMode] = useState(false);
-
-  const [editBio,setEditBio] = useState(false);
-
-  const [user,setUser] = useState({
+  const [user, setUser] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
     joinedDate: 'January 15, 2022',
     avatar: '/placeholder-avatar.jpg',
     bio: 'Frontend developer and UI enthusiast. Building beautiful interfaces with React and CSS.',
   });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add(styles.darkMode);
+    } else {
+      document.body.classList.remove(styles.darkMode);
+    }
+  }, [darkMode]);
 
   return (
     <div className={styles.container}>
@@ -138,7 +143,11 @@ const ProfilePage = () => {
               <div className={styles.preferenceItem}>
                 <span>Dark Mode</span>
                 <label className={styles.switch}>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={darkMode}
+                    onChange={() => setDarkMode(!darkMode)}
+                  />
                   <span className={styles.slider}></span>
                 </label>
               </div>

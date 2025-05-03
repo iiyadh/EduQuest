@@ -1,0 +1,111 @@
+.inbox-layout {
+  width: 100%;
+  max-width: 800px;
+  margin: 16px auto;
+}
+
+.inbox-container {
+  background-color: #f5f5f5;
+  max-height: 700px;
+  overflow: auto;
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .email-list {
+    .email-item {
+      padding: 12px 24px;
+      border-bottom: 1px solid #e0e0e0;
+      cursor: pointer;
+      background-color: white;
+      transition: background-color 0.2s;
+      position: relative;
+
+      &:hover {
+        background-color: #f0f7ff;
+      }
+
+      &.read {
+        opacity: 0.8;
+      }
+
+      .email-content {
+        flex: 1;
+        min-width: 0;
+
+        .email-header {
+          margin-bottom: 4px;
+        }
+
+        .sender-name {
+          font-weight: 500;
+          margin-right: 8px;
+        }
+
+        .sender-email {
+          color: #666;
+          font-size: 0.9em;
+        }
+
+        .subject {
+          font-weight: 500;
+          margin: 4px 0;
+        }
+
+        .content-preview {
+          color: #666;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+}
+
+.email-detail {
+  background-color: white;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .card-body {
+    padding: 24px;
+
+    .sender-info {
+      margin-bottom: 16px;
+
+      .sender-name {
+        font-weight: 500;
+        margin-right: 8px;
+      }
+
+      .sender-email {
+        color: #666;
+        font-size: 0.9em;
+      }
+    }
+
+    .email-content {
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+  }
+}
+
+.btn-cancel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+}

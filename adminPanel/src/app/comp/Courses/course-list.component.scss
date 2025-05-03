@@ -1,0 +1,132 @@
+.container {
+  max-width: 1200px;
+  margin: 100px auto;
+
+  .table {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+
+    thead {
+      background-color: #f8f9fa;
+
+      tr {
+        th {
+          padding: 16px;
+          font-weight: 600;
+          color: #495057;
+          text-transform: uppercase;
+          font-size: 0.75rem;
+          letter-spacing: 0.5px;
+          border-bottom: 2px solid #e9ecef;
+          text-align: left;
+
+          &:first-child {
+            padding-left: 24px;
+          }
+
+          &:last-child {
+            padding-right: 24px;
+          }
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        transition: background-color 0.2s ease;
+        border-bottom: 1px solid #e9ecef;
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        td {
+          padding: 16px;
+          color: #212529;
+          vertical-align: middle;
+
+          &:first-child {
+            padding-left: 24px;
+            font-weight: 500;
+          }
+
+          &:last-child {
+            padding-right: 24px;
+          }
+        }
+      }
+    }
+
+    .btns {
+      display: flex;
+      gap: 20px;
+
+      button {
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        font-size: 0.875rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:first-child {
+          color: #0d6efd;
+
+          &:hover {
+            background-color: rgba(13, 110, 253, 0.1);
+          }
+        }
+
+        &:last-child {
+          color: #dc3545;
+
+          &:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+          }
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+
+    .addButton {
+      background-color: #1890ff;
+      color: white;
+      border: none;
+      padding: 0 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      height: 32px;
+      font-size: 0.875rem;
+      font-weight: 400;
+      transition: all 0.3s ease;
+
+      &:hover {
+      background-color: #1677d4;
+      }
+
+      &:active {
+      background-color: #125ea3;
+      }
+    }
+    .searchBar{
+      .inputGroup{
+        min-width: 300px;
+        input{
+          padding:5px 1px;
+        }
+      }
+    }
+  }
+
+}

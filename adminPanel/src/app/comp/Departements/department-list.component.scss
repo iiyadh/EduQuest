@@ -1,0 +1,72 @@
+.department-container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .search-box {
+      width: 300px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .tag-active {
+    background-color: #f6ffed;
+    border-color: #b7eb8f;
+    color: #52c41a;
+  }
+
+  .tag-inactive {
+    background-color: #fff2f0;
+    border-color: #ffccc7;
+    color: #ff4d4f;
+  }
+
+  .student-avatar {
+    background-color: #1890ff;
+    color: white;
+  }
+
+  .blocked-student {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+  .addButton {
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    padding: 0 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 32px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    transition: all 0.3s ease;
+
+    &:hover {
+    background-color: #1677d4;
+    }
+
+    &:active {
+    background-color: #125ea3;
+    }
+  }
+}

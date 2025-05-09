@@ -1,10 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,HTTPException
 from fastapi.responses import JSONResponse
 from models.departement_models import DepartmentInUpdate
 from controllers.department_controller import create_department,get_all_departments,update_department,delete_department
 from controllers.student_controller import delete_student, block_student,unblock_student
 from controllers.course_controller import create_course, create_lesson, create_module, delete_lesson, delete_module,get_all_courses,get_course_by_id, get_lesson_by_id, get_module_by_id,update_course,delete_course, update_lesson, update_module
-from fastapi import HTTPException
+from controllers.reports_controller import delete_report, get_all_reports
 
 
 
@@ -203,6 +203,26 @@ async def update_lesson_route(lesson_id: int, title: str, content: str):
 async def delete_lesson_route(lesson_id: int):
     try:
         response = delete_lesson(lesson_id)
+        return JSONResponse(content=response, status_code=200)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+
+@router.get("/reports")
+async def get_reports():
+    try:
+        response = get_all_reports()
+        return JSONResponse(content=response, status_code=200)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+    
+@router.delete("/deleteReport/{report_id}")
+async def delete_report_route(report_id: int):
+    try:
+        response = delete_report(report_id)
         return JSONResponse(content=response, status_code=200)
     except HTTPException as e:
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)

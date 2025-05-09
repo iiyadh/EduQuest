@@ -10,9 +10,9 @@ router = APIRouter()
 
 
 @router.post("/createDepartment")
-async def create_department_route(data : DepartmentInCreate):
+async def create_department_route():
     try:
-        response = create_department(data.name, data.description)
+        response = create_department("Untitled Department", "No Description")
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)

@@ -1,10 +1,32 @@
 from lib.db import get_cursor
 
-
 def get_lessons_by_module_id(module_id: int):
     with get_cursor() as cursor:
         cursor.execute("SELECT * FROM lesson WHERE module_id = %s", (module_id,))
-        return cursor.fetchall()
+        result = []
+        lessons = cursor.fetchall()
+        for lesson in lessons:
+            lesson_dict = {
+                "id": lesson[0],
+                "title": lesson[1],
+                "content": lesson[2],
+                "module_id": lesson[3]
+            }
+            result.append(lesson_dict)
+        return result
+
+def get_lesson_by_id(lesson_id: int):
+    with get_cursor() as cursor:
+        cursor.execute("SELECT * FROM lesson WHERE id = %s", (lesson_id,))
+        lesson = cursor.fetchone()
+        if lesson:
+            return {
+                "id": lesson[0],
+                "title": lesson[1],
+                "content": lesson[2],
+                "module_id": lesson[3]
+            }
+        return None
 
 def insert_lesson(title: str, content: str, module_id: int):
     with get_cursor() as cursor:

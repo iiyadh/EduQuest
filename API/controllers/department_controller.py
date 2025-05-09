@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from DAO import department_dao , student_dao
+from models.departement_models import DepartmentInGet
 
 
 def create_department(name: str, description: str):
@@ -15,12 +16,6 @@ def get_all_departments():
         raise HTTPException(status_code=404, detail="No departments found")
     return departments
 
-def get_department_by_id(dept_id: int):
-    department = department_dao.get_department_by_id(dept_id)
-    if not department:
-        raise HTTPException(status_code=404, detail="Department not found")
-    return department
-
 def update_department(dept_id: int, name: str, description: str):
     updated = department_dao.update_department(dept_id, name, description)
     if not updated:
@@ -34,3 +29,7 @@ def delete_department(dept_id: int):
         raise HTTPException(status_code=404, detail="Delete failed")
     return {"message": "Department deleted successfully"}
 
+def get_departments_names_ids():
+    departments = department_dao.get_all_departments()
+    result = [{"id": department["id"], "name": department["name"]} for department in departments]
+    return result

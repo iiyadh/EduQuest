@@ -27,3 +27,44 @@ def delete_report(report_id: int):
     with get_cursor() as cursor:
         cursor.execute("DELETE FROM reports WHERE id = %s", (report_id,))
         return cursor.rowcount > 0
+
+def get_all_reports():
+    with get_cursor() as cursor:
+        cursor.execute("SELECT * FROM reports")
+        result = []
+        reports = cursor.fetchall()
+        for report in reports:
+            report_dict = {
+                "id": report[0],
+                "title": report[1],
+                "content": report[2],
+                "created_at": report[3]
+            }
+            result.append(report_dict)
+        return result
+
+def get_report_by_id(report_id: int):
+    with get_cursor() as cursor:
+        cursor.execute("SELECT * FROM reports WHERE id = %s", (report_id,))
+        report = cursor.fetchone()
+        if report:
+            return {
+                "id": report[0],
+                "title": report[1],
+                "content": report[2],
+                "created_at": report[3]
+            }
+        return None
+
+def insert_report(title: str, content: str):
+    with get_cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO reports (title, content) VALUES (%s, %s) RETURNING id",
+            (title, content)
+        )
+        return cursor.fetchone()[0]
+
+def delete_report_by_id(report_id: int):
+    with get_cursor() as cursor:
+        cursor.execute("DELETE FROM reports WHERE id = %s", (report_id,))
+        return cursor.rowcount > 0

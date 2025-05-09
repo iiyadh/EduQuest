@@ -2,37 +2,72 @@ from lib.db import get_cursor
 
 def get_student_by_email(email: str):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id , password ,is_blocked FROM students WHERE email = %s", (email,))
-        return cursor.fetchone()
-    
+        cursor.execute("SELECT id, password, is_blocked FROM students WHERE email = %s", (email,))
+        student = cursor.fetchone()
+        if student:
+            return {
+                "id": student[0],
+                "password": student[1],
+                "is_blocked": student[2]
+            }
+        return None
+
 def get_student_by_id(student_id: int):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id, email ,is_blocked  FROM students WHERE id = %s", (student_id,))
-        return cursor.fetchone()
-    
+        cursor.execute("SELECT id, email, is_blocked FROM students WHERE id = %s", (student_id,))
+        student = cursor.fetchone()
+        if student:
+            return {
+                "id": student[0],
+                "email": student[1],
+                "is_blocked": student[2]
+            }
+        return None
+
 def get_students_by_department(department_id: int):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id, email ,is_blocked FROM students WHERE department_id = %s", (department_id,))
-        return cursor.fetchall()
+        cursor.execute("SELECT id, email, is_blocked FROM students WHERE department_id = %s", (department_id,))
+        result = []
+        students = cursor.fetchall()
+        for student in students:
+            student_dict = {
+                "id": student[0],
+                "email": student[1],
+                "is_blocked": student[2]
+            }
+            result.append(student_dict)
+        return result
 
 def insert_student(email: str, password: str, department_id: int, username: str):
     with get_cursor() as cursor:
-        cursor.execute("INSERT INTO students (email, password, department_id,username) VALUES (%s, %s, %s,%s) RETURNING id", (email, password, department_id,username))
-        return cursor.lastrowid
+        cursor.execute(
+            "INSERT INTO students (email, password, department_id, username) VALUES (%s, %s, %s, %s) RETURNING id",
+            (email, password, department_id, username)
+        )
+        return cursor.fetchone()[0]
 
 def update_email_name_by_id(student_id: int, email: str, username: str):
     with get_cursor() as cursor:
-        cursor.execute("UPDATE students SET email = %s , username = %s WHERE id = %s", (email, username, student_id))
+        cursor.execute(
+            "UPDATE students SET email = %s, username = %s WHERE id = %s",
+            (email, username, student_id)
+        )
         return cursor.rowcount > 0
-    
+
 def update_bio_by_id(student_id: int, about: str):
     with get_cursor() as cursor:
-        cursor.execute("UPDATE students SET about = %s WHERE id = %s", (about, student_id))
+        cursor.execute(
+            "UPDATE students SET about = %s WHERE id = %s",
+            (about, student_id)
+        )
         return cursor.rowcount > 0
-    
+
 def change_status_student_by_id(student_id: int, status: bool):
     with get_cursor() as cursor:
-        cursor.execute("UPDATE students SET is_blocked = %s WHERE id = %s", (student_id,status,))
+        cursor.execute(
+            "UPDATE students SET is_blocked = %s WHERE id = %s",
+            (status, student_id)
+        )
         return cursor.rowcount > 0
 
 def delete_student_by_id(student_id: int):

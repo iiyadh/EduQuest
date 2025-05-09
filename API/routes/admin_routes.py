@@ -1,66 +1,45 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from controllers import course_controller, department_controller
-from models.course_models import Course
+from models.departement_models import DepartmentInCreate, DepartmentInUpdate
+from controllers.department_controller import create_department,get_all_departments,update_department,delete_department,get_departments_names_ids
+
+
+
 
 router = APIRouter()
 
-# Student management endpoints
 
-# Course management endpoints
-@router.post("/courses")
-async def create_course():
+@router.post("/createDepartment")
+async def create_department_route(data : DepartmentInCreate):
     try:
-        response = course_controller.create_course()
-        return JSONResponse(content={"id": response}, status_code=201)
+        response = create_department(data.name, data.description)
+        return JSONResponse(content=response, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
-
-@router.put("/courses/{course_id}")
-async def update_course(course_id: int, title: str, description: str, level: str, duration: str):
+    
+    
+@router.put("updateDepartment")
+async def update_department_route(data : DepartmentInUpdate):
     try:
-        response = course_controller.update_course(course_id, title, description, level, duration)
+        response = update_department(data.id, data.name, data.description)
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
 
-@router.delete("/courses/{course_id}")
-async def delete_course(course_id: int):
+
+@router.delete("/deleteDepartment/{dept_id}")
+async def delete_department_route(dept_id: int):
     try:
-        response = course_controller.delete_course(course_id)
+        response = delete_department(dept_id)
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
+    
 
-# Department management endpoints
-@router.post("/departments")
-async def create_department(name: str, description: str):
-    try:
-        response = department_controller.create_department(name, description)
-        return JSONResponse(content=response, status_code=201)
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
-
-@router.get("/departments")
+@router.get("/getDepartments")
 async def get_departments():
     try:
-        response = department_controller.get_all_departments()
-        return JSONResponse(content=response, status_code=200)
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
-
-@router.put("/departments/{dept_id}")
-async def update_department(dept_id: int, name: str, description: str):
-    try:
-        response = department_controller.update_department(dept_id, name, description)
-        return JSONResponse(content=response, status_code=200)
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
-
-@router.delete("/departments/{dept_id}")
-async def delete_department(dept_id: int):
-    try:
-        response = department_controller.delete_department(dept_id)
+        response = get_all_departments()
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)

@@ -3,7 +3,7 @@ from lib.db import get_cursor
 def enroll_user(course_id: int, user_id: int):
     with get_cursor() as cursor:
         cursor.execute(
-            "INSERT INTO enrollment (course_id, user_id) VALUES (%s, %s) ON CONFLICT DO NOTHING ",
+            "INSERT INTO enrollment (course_id, user_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
             (course_id, user_id)
         )
         return cursor.rowcount > 0
@@ -19,7 +19,18 @@ def update_enrollment_progress(course_id: int, user_id: int, last_lesson_id: int
 def get_user_enrollments(user_id: int):
     with get_cursor() as cursor:
         cursor.execute("SELECT * FROM enrollment WHERE user_id = %s", (user_id,))
-        return cursor.fetchall()
+        result = []
+        enrollments = cursor.fetchall()
+        for enrollment in enrollments:
+            enrollment_dict = {
+                "id": enrollment[0],
+                "course_id": enrollment[1],
+                "user_id": enrollment[2],
+                "last_lesson_id": enrollment[3],
+                "last_activity_date": enrollment[4]
+            }
+            result.append(enrollment_dict)
+        return result
 
 def unenroll_user(course_id: int, user_id: int):
     with get_cursor() as cursor:

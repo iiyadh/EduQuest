@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth_routes, admin_routes
+from routes import auth_routes,admin_routes
 import lib.db as db
 
 app = FastAPI()

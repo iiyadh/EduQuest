@@ -56,11 +56,11 @@ def get_report_by_id(report_id: int):
             }
         return None
 
-def insert_report(title: str, content: str):
+def insert_report(userId : int,title: str, content: str):
     with get_cursor() as cursor:
         cursor.execute(
-            "INSERT INTO reports (title, content) VALUES (%s, %s) RETURNING id",
-            (title, content)
+            "INSERT INTO reports (user_id,title, content) VALUES (%s,%s, %s) RETURNING id",
+            (userId , title , content)
         )
         return cursor.fetchone()[0]
 

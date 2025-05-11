@@ -6,7 +6,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { FormsModule } from '@angular/forms';
-import {CoursesService} from "../../services/courses.service";
+import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,40 +19,41 @@ import { Router } from '@angular/router';
 export class CourseListComponent implements OnInit {
 
   constructor(
-    private coursesService: CoursesService,
-    private router: Router
+    private router: Router,
+    private api: ApiService
   ) {}
 
   searchTerm: string = '';
   courses: Course[] = [];
   filteredCourses: Course[] = [];
 
+
   ngOnInit(): void {
-    this.coursesService.cleanCourses();
-    this.courses = this.coursesService.getAllCourses();
-    this.filteredCourses = [...this.courses];
+    this.api.getCourses().subscribe((data: Course[]) => {
+      this.courses = data;
+      this.filteredCourses = data;
+    });
   }
 
-  filterCourses(): void {
-    const term = this.searchTerm.trim().toLowerCase();
 
-    if (term) {
+  filterCourses(): void {
+    if (this.searchTerm) {
       this.filteredCourses = this.courses.filter(course =>
-        (course.title?.toLowerCase() ?? '').includes(term) ||
-        (course.description?.toLowerCase() ?? '').includes(term)
+        course.title.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     } else {
-      this.filteredCourses = [...this.courses];
+      this.filteredCourses = this.courses;
     }
+  }
+
+  deleteCourse(courseId: any): void {
+    this.api.deleteCourse(courseId).subscribe(() => {
+      this.courses = this.courses.filter(course => +course.id !== courseId);
+      this.filteredCourses = this.filteredCourses.filter(course => +course.id !== courseId);
+    });
   }
 
   navigateTo(courseId :any):void{
     this.router.navigateByUrl(`/courses/${courseId}`);
-  }
-
-  deleteCourse(courseId: any): void {
-    this.coursesService.deleteCourse(courseId);
-    this.courses = this.courses.filter(course => course.id !== courseId);
-    this.filteredCourses = this.courses;
   }
 }

@@ -8,7 +8,7 @@ def get_student_by_email(email: str):
             return {
                 "id": student[0],
                 "password": student[1],
-                "is_blocked": student[2]
+                "isBlocked": student[2]
             }
         return None
 
@@ -20,7 +20,7 @@ def get_student_by_id(student_id: int):
             return {
                 "id": student[0],
                 "email": student[1],
-                "is_blocked": student[2]
+                "isBlocked": student[2]
             }
         return None
 
@@ -33,7 +33,7 @@ def get_students_by_department(department_id: int):
             student_dict = {
                 "id": student[0],
                 "email": student[1],
-                "is_blocked": student[2]
+                "isBlocked": student[2]
             }
             result.append(student_dict)
         return result

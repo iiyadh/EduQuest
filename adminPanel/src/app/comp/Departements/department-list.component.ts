@@ -11,8 +11,9 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
-import { DepartmentsService, Department } from '../../services/departements.service';
+import { Department } from '../../services/departements.service';
 import { Router } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-department-list',
@@ -38,76 +39,76 @@ export class DepartmentListComponent implements OnInit {
   searchTerm = '';
   depId = '';
   isLoading = true;
-  dep !:Department;
+  dep : Department = { id: '', name: '', description: '' };
   originalDep!: Department;
 
   departments: Department[] = [];
   filteredDepartments: Department[] = [];
 
   constructor(
-    private departmentsService: DepartmentsService,
-    private router : Router
+    private router: Router,
+    private api: ApiService
   ) {}
 
   ngOnInit(): void {
     this.loadDepartments();
   }
 
-  addDepartement():void{
-    const genId = Math.floor(Math.random() * 1000).toString()
-    const departement = {
-        id: genId,
-        name: "Untitled Department",
-        description: "Some Description",
-        students: []
-    }
-    this.departmentsService.addDepartement(departement as Department)
-    this.loadDepartments();
-    this.tooggleEdit(genId);
+  addDepartement(): void {
+    this.api.createDepartment().subscribe((data) => {
+      this.loadDepartments();
+      this.tooggleEdit(data);
+    });
   }
 
   tooggleEdit(depId: string): void {
+    console.log(depId)
     this.depId = depId;
-    const department = this.departmentsService.getDepartementById(depId);
+    const department = this.departments.find(dept => dept.id === depId);
     if (department) {
       this.dep = {
         ...department,
-        students: [...department.students]
       };
       this.originalDep = {
         ...department,
-        students: [...department.students]
       };
     }
   }
-  
+
   toogleCancel(): void {
-    if(this.dep.name === "Untitled Department"){
-      console.log(this.dep.name);
-      this.departmentsService.deleteDepartment(this.dep.id);
-      this.loadDepartments();
+    if (this.dep.name === "Untitled Department") {
+      this.api.deleteDepartment(Number(this.dep.id)).subscribe(() => {
+        this.loadDepartments();
+      });
     }
-    this.dep = { id: '', name: '', description: '', students: [] };
+    this.dep = { id: '', name: '', description: '' };
     this.depId = '';
   }
 
   saveChanges(): void {
-    this.departmentsService.updateDepartement(this.depId, this.dep);
-    if(this.dep.name === "Untitled Department"){
-      this.departmentsService.deleteDepartment(this.dep.id);
-    }
+    this.api.updateDepartment(this.dep).subscribe(() => {
+      if (this.dep.name === "Untitled Department") {
+        this.api.deleteDepartment(Number(this.dep.id)).subscribe(() => {
+          this.loadDepartments();
+        });
+      } else {
+        this.loadDepartments();
+      }
+    });
     this.depId = '';
-    this.dep = { id: '', name: '', description: '', students: [] };
-    this.loadDepartments();
+    this.dep = { id: '', name: '', description: '' };
   }
-  
-
 
   loadDepartments(): void {
     this.isLoading = true;
-    this.departments = this.departmentsService.getAllDepartements();
-    this.filteredDepartments = [...this.departments];
-    this.isLoading = false;
+    this.api.getDepartments().subscribe((data: Department[]) => {
+      this.departments = data;
+      this.filteredDepartments = data;
+      this.isLoading = false;
+    }, error => {
+      console.error('Error loading departments:', error);
+      this.isLoading = false;
+    });
   }
 
   filterDepartments(): void {
@@ -126,7 +127,12 @@ export class DepartmentListComponent implements OnInit {
   }
 
   deleteDepartment(id: string): void {
-      this.departmentsService.deleteDepartment(id);
+    this.api.deleteDepartment(Number(id)).subscribe(() => {
+      this.departments = this.departments.filter(department => department.id !== id);
+      this.filteredDepartments = this.filteredDepartments.filter(department => department.id !== id);
       this.loadDepartments();
+    }, error => {
+      console.error('Error deleting department:', error);
+    });
   }
 }

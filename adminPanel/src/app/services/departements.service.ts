@@ -11,7 +11,6 @@ export interface Department {
   id: string;
   name: string;
   description: string;
-  students: Student[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,18 +21,18 @@ export class DepartmentsService {
       id: '1',
       name: 'Computer Science',
       description: 'Department of Computer Science and Engineering',
-      students: [
-        { id: 's1', name: 'Alice Smith', email: 'alice@example.com', isBlocked: false },
-        { id: 's2', name: 'Bob Johnson', email: 'bob@example.com', isBlocked: false }
-      ]
+      // students: [
+      //   { id: 's1', name: 'Alice Smith', email: 'alice@example.com', isBlocked: false },
+      //   { id: 's2', name: 'Bob Johnson', email: 'bob@example.com', isBlocked: false }
+      // ]
     },
     {
       id: '2',
       name: 'Mathematics',
       description: 'Department of Mathematics',
-      students: [
-        { id: 's3', name: 'Charlie Brown', email: 'charlie@example.com', isBlocked: true }
-      ]
+      // students: [
+      //   { id: 's3', name: 'Charlie Brown', email: 'charlie@example.com', isBlocked: true }
+      // ]
     }
   ];
 
@@ -68,21 +67,21 @@ deleteDepartment(id: string): boolean {
 }
 
 
-getAllStudentsFromDepartement(departmentId: string): Student[] {
-    const departement = this.departements.find(dep => dep.id === departmentId);
-    if (!departement) {
-        throw new Error(`Departement with id ${departmentId} not found.`);
-    }
-    return [...departement.students];
-}
+// getAllStudentsFromDepartement(departmentId: string): Student[] {
+//     const departement = this.departements.find(dep => dep.id === departmentId);
+//     if (!departement) {
+//         throw new Error(`Departement with id ${departmentId} not found.`);
+//     }
+//     return [...departement.students];
+// }
 
-blockStudent(studentId: string): void {
-  for (let dep of this.departements) {
-    const student = dep.students.find(s => s.id === studentId);
-    if (student) {
-      student.isBlocked = true;
-      return;
-    }
-  }
-}
+// blockStudent(studentId: string): void {
+//   for (let dep of this.departements) {
+//     const student = dep.students.find(s => s.id === studentId);
+//     if (student) {
+//       student.isBlocked = true;
+//       return;
+//     }
+//   }
+// }
 }

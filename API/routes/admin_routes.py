@@ -1,7 +1,7 @@
 from fastapi import APIRouter,HTTPException
 from fastapi.responses import JSONResponse
 from models.departement_models import DepartmentInUpdate
-from controllers.department_controller import create_department,get_all_departments,update_department,delete_department
+from controllers.department_controller import create_department,get_all_departments, get_students_by_department,update_department,delete_department
 from controllers.student_controller import delete_student, block_student,unblock_student
 from controllers.course_controller import create_course, create_lesson, create_module, delete_lesson, delete_module,get_all_courses,get_course_by_id, get_lesson_by_id, get_module_by_id,update_course,delete_course, update_lesson, update_module
 from controllers.reports_controller import delete_report, get_all_reports
@@ -20,7 +20,7 @@ async def create_department_route():
         return JSONResponse(content={"error": str(e)}, status_code=400)
     
     
-@router.put("updateDepartment")
+@router.put("/updateDepartment")
 async def update_department_route(data : DepartmentInUpdate):
     try:
         response = update_department(data.id, data.name, data.description)
@@ -43,6 +43,16 @@ async def get_departments():
     try:
         response = get_all_departments()
         return JSONResponse(content=response, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+    
+@router.get("/getStudents/{dept_id}")
+async def get_students_by_department_route(dept_id: int):
+    try:
+        response = get_students_by_department(dept_id)
+        return JSONResponse(content=response, status_code=200)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
     

@@ -289,6 +289,10 @@ export class CoursesService {
     return this.courses;
   }
 
+  setCourses(courses: Course[]): void {
+    this.courses = courses;
+  }
+
   getCourseById(id: string): Course | undefined {
     return this.courses.find(course => course.id === id);
   }

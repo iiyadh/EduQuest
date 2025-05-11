@@ -11,7 +11,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Student } from '../../../services/departements.service';
 import { ActivatedRoute } from '@angular/router';
-import { DepartmentsService } from "../../../services/departements.service";
+import { ApiService } from '../../../services/api.service';
 
 @Component({
     selector: 'app-student-list',
@@ -35,19 +35,22 @@ export class StudentListComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private departmentsService : DepartmentsService
-
-    ){
-        
-    }
+        private api: ApiService
+    ) {}
 
     students: Student[] = [];
     searchText = '';
 
     ngOnInit(): void {
-        const dep = this.departmentsService.getDepartementById(this.route.snapshot.paramMap.get('id') as string);
-        if (dep){
-            this.students = dep.students;
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id) {
+            const numericId = Number(id);
+            this.api.getStudentsDep(numericId).subscribe((data: any) => {
+                const department = data.find((dept: any) => dept.id === numericId);
+                if (department) {
+                    this.students = department.students;
+                }
+            });
         }
     }
 
@@ -59,10 +62,20 @@ export class StudentListComponent implements OnInit {
     }
 
     toggleBlock(student: Student): void {
-        student.isBlocked = !student.isBlocked;
+        if (student.isBlocked) {
+            this.api.unblockStudent(+student.id).subscribe(() => {
+                student.isBlocked = false;
+            });
+        } else {
+            this.api.blockStudent(+student.id, true).subscribe(() => {
+                student.isBlocked = true;
+            });
+        }
     }
 
     deleteStudent(id: string): void {
-        this.students = this.students.filter(student => student.id !== id);
+        this.api.deleteStudent(+id).subscribe(() => {
+            this.students = this.students.filter(student => student.id !== id);
+        });
     }
 }

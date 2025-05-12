@@ -42,19 +42,25 @@ export class StudentListComponent implements OnInit {
     searchText = '';
 
     ngOnInit(): void {
+        this.loadStudents();
+    }
+
+
+    loadStudents(): void {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
             const numericId = Number(id);
             this.api.getStudentsDep(numericId).subscribe((data: any) => {
-                const department = data.find((dept: any) => dept.id === numericId);
-                if (department) {
-                    this.students = department.students;
-                }
+                this.students = data;
+                console.log(this.students);
             });
         }
     }
 
     get filteredStudents() {
+        if (!this.searchText) {
+            return this.students;
+        }
         return this.students.filter(student => 
             student.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
             student.email.toLowerCase().includes(this.searchText.toLowerCase())

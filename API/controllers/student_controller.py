@@ -1,9 +1,10 @@
 from fastapi import HTTPException
 from DAO import student_dao
 
-def block_student(student_id: int):
+def block_student_tt(student_id: int):
     success = student_dao.change_status_student_by_id(student_id, True)
     if not success:
+        print(f"Failed to block student with ID: {student_id}")
         raise HTTPException(status_code=404, detail="Student not found")
     return {"message": "Student blocked successfully"}
 

@@ -26,14 +26,15 @@ def get_student_by_id(student_id: int):
 
 def get_students_by_department(department_id: int):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id, email, is_blocked FROM student WHERE department_id = %s", (department_id,))
+        cursor.execute("SELECT id, username , email, is_blocked FROM student WHERE department_id = %s", (department_id,))
         result = []
         students = cursor.fetchall()
         for student in students:
             student_dict = {
                 "id": student[0],
-                "email": student[1],
-                "isBlocked": student[2]
+                "name": student[1],
+                "email": student[2],
+                "isBlocked": student[3]
             }
             result.append(student_dict)
         return result

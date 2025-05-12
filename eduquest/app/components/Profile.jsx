@@ -2,13 +2,16 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
 import styles from '../styles/Profile.module.css';
+import axios from 'axios';
+import useAuthStore  from '../stores/authStore';
 
 const ProfilePage = () => {
   const [editMode, setEditMode] = useState(false);
   const [editBio, setEditBio] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const { user }  = useAuthStore();
 
-  const [user, setUser] = useState({
+  const [user1, setUser] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
     joinedDate: 'January 15, 2022',
@@ -24,16 +27,67 @@ const ProfilePage = () => {
     }
   }, [darkMode]);
 
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        console.log("user", user);
+        const response = await axios.get(`http://localhost:8000/student/getStudent/${user.user_id}`);
+        const userData = response.data;
+        setUser({
+          ...user1,
+          name: userData.name,
+          email: userData.email,
+          joinedDate: userData.joinedDate,
+          bio: userData.bio,
+        });
+      }catch(error){
+          console.error("Error fetching user data:", error);
+      }
+    }
+    fetchUserData();
+  },[]);
+
+
+  const handleSaveChanges1 = async () => {
+    try{
+      await axios.put(`http://localhost:8000/student/changeemailname/${user.user_id}`,
+        {
+          email: user1.email,
+          username: user1.name,
+        }
+      );
+    }catch(error){
+      console.error("Error saving changes:", error);
+    }
+    setEditMode(false);
+  }
+
+
+    const handleSaveChanges2 = async () => {
+
+      try{
+        await axios.put(`http://localhost:8000/student/updatebio/${user.user_id}`,
+          {
+            about: user1.bio,
+          }
+        );
+    }catch(error){
+      console.error("Error saving changes:", error);
+    }
+      setEditBio(false);
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.profileWrapper}>
         <div className={styles.sidebar}>
           <div className={styles.card}>
             <div className={styles.avatarContainer}>
-              <div className={styles.avatarLetter}>{user.name.substring(0, 3).toUpperCase()}</div>
+              <div className={styles.avatarLetter}>{user1.name.substring(0, 3).toUpperCase()}</div>
             </div>
-            <h2 className={styles.userName}>{user.name}</h2>
-            <p className={styles.userEmail}>{user.email}</p>
+            <h2 className={styles.userName}>{user1.name}</h2>
+            <p className={styles.userEmail}>{user1.email}</p>
           </div>
         </div>
 
@@ -47,8 +101,8 @@ const ProfilePage = () => {
                   <input
                     type="text"
                     className={styles.inputField}
-                    value={user.name}
-                    onChange={(e) => setUser({ ...user, name: e.target.value })}
+                    value={user1.name}
+                    onChange={(e) => setUser({ ...user1, name: e.target.value })}
                   />
                 </div>
                 <div className={styles.infoItem}>
@@ -56,17 +110,17 @@ const ProfilePage = () => {
                   <input
                     type="email"
                     className={styles.inputField}
-                    value={user.email}
-                    onChange={(e) => setUser({ ...user, email: e.target.value })}
+                    value={user1.email}
+                    onChange={(e) => setUser({ ...user1, email: e.target.value })}
                   />
                 </div>
                 <div className={styles.infoItem}>
                   <label className={styles.infoLabel}>Member Since</label>
-                  <p className={styles.readOnlyField}>{user.joinedDate}</p>
+                  <p className={styles.readOnlyField}>{user1.joinedDate}</p>
                 </div>
               </div>
               <div className={styles.buttonGroup}>
-                <button className={styles.saveButton} onClick={() => setEditMode(false)}>
+                <button className={styles.saveButton} onClick={handleSaveChanges1}>
                   Save Changes
                 </button>
                 <button className={styles.cancelButton} onClick={() => setEditMode(false)}>
@@ -88,15 +142,15 @@ const ProfilePage = () => {
               <div className={styles.infoGroup}>
                 <div className={styles.infoItem}>
                   <h3 className={styles.infoLabel}>Full Name</h3>
-                  <p className={styles.infoValue}>{user.name}</p>
+                  <p className={styles.infoValue}>{user1.name}</p>
                 </div>
                 <div className={styles.infoItem}>
                   <h3 className={styles.infoLabel}>Email</h3>
-                  <p className={styles.infoValue}>{user.email}</p>
+                  <p className={styles.infoValue}>{user1.email}</p>
                 </div>
                 <div className={styles.infoItem}>
                   <h3 className={styles.infoLabel}>Member Since</h3>
-                  <p className={styles.infoValue}>{user.joinedDate}</p>
+                  <p className={styles.infoValue}>{user1.joinedDate}</p>
                 </div>
               </div>
             </div>
@@ -119,11 +173,11 @@ const ProfilePage = () => {
               (<>
                 <textarea
                   className={styles.bioArea}
-                  value={user.bio}
-                  onChange={(e) => setUser({ ...user, bio: e.target.value })}
+                  value={user1.bio}
+                  onChange={(e) => setUser({ ...user1, bio: e.target.value })}
                 />
                 <div className={styles.buttonGroup}>
-                  <button className={styles.saveButton} onClick={() => setEditBio(false)}>
+                  <button className={styles.saveButton} onClick={handleSaveChanges2}>
                     Save Changes
                   </button>
                   <button className={styles.cancelButton} onClick={() => setEditBio(false)}>
@@ -133,7 +187,7 @@ const ProfilePage = () => {
               </>
               )
             ) : (
-              <p className={styles.userBio}>{user.bio}</p>
+              <p className={styles.userBio}>{user1.bio}</p>
             )}
           </div>
 

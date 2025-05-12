@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from controllers.reports_controller import create_report
-from controllers.student_controller import update_student_bio, update_student_email_name
+from controllers.student_controller import  get_student_by_id_t, update_student_bio, update_student_email_name
 from models.user_models import ReportUser, UserInUpdate, UserInUpdateBio
 from controllers.department_controller import get_departments_names_ids
 from controllers.course_controller import get_all_courses
@@ -86,6 +86,14 @@ async def update_student_bio_route(student_id: int, data: UserInUpdateBio):
 async def create_report_route(data: ReportUser):
     try:
         response = create_report(data.user_id, data.subject, data.content)
+        return JSONResponse(content=response, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+    
+@router.get("/getStudent/{student_id}")
+async def get_student_route(student_id: int):
+    try:
+        response = get_student_by_id_t(student_id)
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)

@@ -14,15 +14,17 @@ def get_student_by_email(email: str):
 
 def get_student_by_id(student_id: int):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id, email, is_blocked FROM student WHERE id = %s", (student_id,))
+        cursor.execute("SELECT username, email, create_at, about FROM student WHERE id = %s", (student_id,))
         student = cursor.fetchone()
         if student:
             return {
-                "id": student[0],
+                "name": student[0],
                 "email": student[1],
-                "isBlocked": student[2]
+                "joinedDate": student[2].isoformat() if student[2] else None,
+                "bio": student[3]
             }
         return None
+
 
 def get_students_by_department(department_id: int):
     with get_cursor() as cursor:

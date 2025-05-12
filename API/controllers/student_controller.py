@@ -33,3 +33,9 @@ def update_student_bio(student_id: int, about: str):
     if not success:
         raise HTTPException(status_code=404, detail="Student not found")
     return {"message": "Student bio updated successfully"}
+
+def get_student_by_id_t(student_id: int):
+    student = student_dao.get_student_by_id(student_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return student

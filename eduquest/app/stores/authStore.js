@@ -7,13 +7,22 @@ const useAuthStore = create((set, get) => ({
 
   login: async (userData) => {
     try {
-      const res = await axios.post("/login", userData);
+      const res = await axios.post("http://127.0.0.1:8000/auth/login", userData);
       const user = res.data;
       set({ user });
       localStorage.setItem("user", JSON.stringify(user));
       return user;
     } catch (err) {
-      throw new Error(err.response?.data?.error || "Login failed");
+      if (err.response) {
+        // Server responded with an error
+        throw new Error(err.response.data?.error || `Login failed: ${err.response.status}`);
+      } else if (err.request) {
+        // Request was made but no response
+        throw new Error('No response from server. Please check your connection.');
+      } else {
+        // Something else went wrong
+        throw new Error('Login request failed. Please try again.');
+      }
     }
   },
 

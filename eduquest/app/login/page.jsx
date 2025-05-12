@@ -9,10 +9,11 @@ import { useRouter } from 'next/navigation';
 
 export default function Login() {
 
-  axios.defaults.baseURL = "http://127.0.0.1:8000";
+  axios.defaults.baseURL = "http://127.0.0.1:8000/auth";
 
 
   const {login,checkAuth} = useAuthStore();
+  const [errorMsg, setErrorMsg] = useState('');
 
 
 
@@ -39,27 +40,17 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const res = login(formData);
-      if(res !== false){
-        router.push('/home');
-      }
-    }catch (error) {
-      console.error("Error during login:", error);
-    }
-    // try{
-    //   const res = login(formData);
+    try {
+      const res = await login(formData);
+      router.push('/home');
+      setErrorMsg('');
+      setErrorMsg(res.message || 'Login failed. Please try again.');
 
-    //   if(res !== false){
-    //     router.push('/home');
-    //   }
-      
-    // } catch (error) {
-    //   console.error("Error during login:", error);
-    // }
-    // console.log({ ...formData, rememberMe });
+    } catch (error) {
+      setErrorMsg(error.response?.data?.message || error.message || "An error occurred during login.");
+    }
   };
 
   return (
@@ -142,6 +133,8 @@ export default function Login() {
           <p className={styles.signupPrompt}>
             Don't have an account? <Link href="/signup" className={styles.signupLink}>Sign up</Link>
           </p>
+
+          {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
         </div>
       </div>
     </>

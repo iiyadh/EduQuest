@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 @router.post("/login")
-async def login(data: UserInLogin):
+async def login_user(data: UserInLogin):
     try:
         response = login(data)
         return JSONResponse(content=response, status_code=200)

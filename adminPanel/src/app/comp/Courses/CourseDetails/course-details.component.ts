@@ -4,8 +4,9 @@ import { MarkdownModule } from 'ngx-markdown';
 import { FormsModule } from '@angular/forms';
 import { marked, Renderer, Tokens } from 'marked';
 import hljs from 'highlight.js';
-import { Course, Module, Lesson, CoursesService } from "../../../services/courses.service";
+import { Course, Module, Lesson } from "../../../services/courses.service";
 import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../../services/api.service';
 
 marked.use({
   renderer: {
@@ -29,10 +30,9 @@ export class CourseDetailsComponent implements OnInit {
   course!: Course;
   editingLesson: string | null = null;
   activeTab: 'write' | 'preview' = 'write';
-  
 
   constructor(
-    private coursesService: CoursesService,
+    private apiService: ApiService,
     private route: ActivatedRoute
   ) {
     marked.use({
@@ -46,51 +46,66 @@ export class CourseDetailsComponent implements OnInit {
       }
     });
   }
-  renderMarkdown(markdown: string){
+
+  renderMarkdown(markdown: string) {
     return marked.parse(markdown);
   }
-  
-  
-  
 
   ngOnInit(): void {
-    const course = this.coursesService.getCourseById(this.route.snapshot.paramMap.get('id') as string);
-    if (course) {
-      this.course = course;
-    } else {
-      this.course = {
-        id: this.generateId(),
-        title: 'Untitled Course',
-        description: '',
-        level: '',
-        duration: '',
-        modules: []
-      };
-      this.coursesService.addCourse(this.course);
-    }
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.apiService.getCourseById(id).subscribe({
+      next: (course) =>{ this.course = course;console.log(this.course)},
+      error: () => {
+        this.apiService.createCourse().subscribe((newCourse) => {
+          this.course = newCourse.course;
+          console.log(this.course);
+        });
+      }
+    });
   }
 
   updateCourse(field: keyof Course, event: Event): void {
     const element = event.target as HTMLElement;
     (this.course as any)[field] = element.innerText;
-    this.coursesService.updateCourse(this.course);
+    this.apiService.updateCourse(
+      +this.course.id,
+      this.course.title,
+      this.course.description,
+      this.course.level,
+      this.course.duration
+    ).subscribe({
+      next: () => console.log('Course updated successfully'),
+      error: (error) => console.error('Error updating course:', error)
+    });
   }
 
   updateModule(moduleIndex: number, field: keyof Module, event: Event): void {
     const element = event.target as HTMLElement;
-    (this.course.modules[moduleIndex] as any)[field] = element.innerText;
-    this.coursesService.updateCourse(this.course);
+    const module = this.course.modules[moduleIndex];
+    module.title = element.innerText;
+    this.apiService.updateModule(+module.id, module.title).subscribe({
+      next: () => console.log('Module updated successfully'),
+      error: (error) => console.error('Error updating module:', error)
+    });
   }
 
   updateLesson(moduleIndex: number, lessonIndex: number, field: keyof Lesson, event: Event): void {
     const element = event.target as HTMLElement;
-    (this.course.modules[moduleIndex].lessons[lessonIndex] as any)[field] = element.innerText;
-    this.coursesService.updateCourse(this.course);
+    const lesson = this.course.modules[moduleIndex].lessons[lessonIndex];
+    (lesson as any)[field] = element.innerText;
+    this.apiService.updateLesson(+lesson.id, lesson.title, lesson.content).subscribe({
+      next: () => console.log('Lesson updated successfully'),
+      error: (error) => console.error('Error updating lesson:', error)
+    });
   }
 
   updateLessonContent(moduleIndex: number, lessonIndex: number, content: string): void {
-    this.course.modules[moduleIndex].lessons[lessonIndex].content = content;
-    this.coursesService.updateCourse(this.course);
+    const lesson = this.course.modules[moduleIndex].lessons[lessonIndex];
+    lesson.content = content;
+    this.apiService.updateLesson(+lesson.id, lesson.title, lesson.content).subscribe({
+      next: () => console.log('Lesson content updated successfully'),
+      error: (error) => console.error('Error updating lesson content:', error)
+    });
   }
 
   toggleEditor(moduleIndex: number, lessonIndex: number): void {
@@ -99,39 +114,53 @@ export class CourseDetailsComponent implements OnInit {
     this.activeTab = 'write';
   }
 
-  generateId(): string {
-    return 'id-' + Math.random().toString(36).substr(2, 9);
-  }
-
   addModule(): void {
-    this.course.modules.push({
-      id: this.generateId(),
-      title: 'New Module',
-      lessons: [{
-        id: this.generateId(),
-        title: 'New Lesson',
-        content: '## Lesson Content\n\nStart writing here...'
-      }]
+    this.apiService.createModule(+this.course.id).subscribe({
+      next: (createdModule) => {
+        this.course.modules.push(createdModule);
+        console.log('Module created successfully');
+      },
+      error: (error) => console.error('Error creating module:', error)
     });
-    this.coursesService.updateCourse(this.course);
   }
 
   deleteModule(index: number): void {
+    const moduleId = this.course.modules[index].id;
     this.course.modules.splice(index, 1);
-    this.coursesService.updateCourse(this.course);
+    this.apiService.deleteModule(+moduleId).subscribe({
+      next: () => console.log('Module deleted successfully'),
+      error: (error) => console.error('Error deleting module:', error)
+    });
   }
 
   addLesson(moduleIndex: number): void {
-    this.course.modules[moduleIndex].lessons.push({
-      id: this.generateId(),
-      title: 'New Lesson',
-      content: '## Lesson Content\n\nStart writing here...'
+    const module = this.course.modules[moduleIndex];
+    this.apiService.createLesson(+module.id).subscribe({
+      next: (createdLesson) => {
+        // Update new lesson with default content
+        const updatedLesson = {
+          ...createdLesson,
+          title: 'New Lesson',
+          content: '## Lesson Content\n\nStart writing here...'
+        };
+        this.apiService.updateLesson(updatedLesson.id, updatedLesson.title, updatedLesson.content).subscribe({
+          next: () => {
+            module.lessons.push(updatedLesson);
+            console.log('Lesson created successfully');
+          },
+          error: (error) => console.error('Error initializing lesson:', error)
+        });
+      },
+      error: (error) => console.error('Error creating lesson:', error)
     });
-    this.coursesService.updateCourse(this.course);
   }
 
   deleteLesson(moduleIndex: number, lessonIndex: number): void {
+    const lessonId = this.course.modules[moduleIndex].lessons[lessonIndex].id;
     this.course.modules[moduleIndex].lessons.splice(lessonIndex, 1);
-    this.coursesService.updateCourse(this.course);
+    this.apiService.deleteLesson(+lessonId).subscribe({
+      next: () => console.log('Lesson deleted successfully'),
+      error: (error) => console.error('Error deleting lesson:', error)
+    });
   }
 }

@@ -57,7 +57,6 @@ export class DepartmentListComponent implements OnInit {
   addDepartement(): void {
     this.api.createDepartment().subscribe((data) => {
       this.loadDepartments();
-      this.tooggleEdit(data);
     });
   }
 

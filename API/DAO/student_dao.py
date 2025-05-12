@@ -2,7 +2,7 @@ from lib.db import get_cursor
 
 def get_student_by_email(email: str):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id, password, is_blocked FROM students WHERE email = %s", (email,))
+        cursor.execute("SELECT id, password, is_blocked FROM student WHERE email = %s", (email,))
         student = cursor.fetchone()
         if student:
             return {
@@ -14,7 +14,7 @@ def get_student_by_email(email: str):
 
 def get_student_by_id(student_id: int):
     with get_cursor() as cursor:
-        cursor.execute("SELECT id, email, is_blocked FROM students WHERE id = %s", (student_id,))
+        cursor.execute("SELECT id, email, is_blocked FROM student WHERE id = %s", (student_id,))
         student = cursor.fetchone()
         if student:
             return {

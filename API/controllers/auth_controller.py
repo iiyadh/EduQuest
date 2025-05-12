@@ -36,7 +36,7 @@ def register(user: UserInRegister):
     hashed_password = hash_password(user.password)
     student_id = student_dao.insert_student(
         email=user.email,
-        hashed_password=hashed_password,
+        password=hashed_password,
         department_id=user.departmentId,
         username=user.username,
     )

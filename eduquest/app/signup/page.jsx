@@ -7,20 +7,11 @@ import axios from 'axios';
 import useAuthStore from '../stores/authStore';
 
 export default function SignUp() {
-  axios.defaults.baseURL = "http://127.0.0.1:8000";
+  axios.defaults.baseURL = "http://localhost:8000/student";
 
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [departments,setDepartements] = useState([
-    {name:"Computer Science", _id:"1"},
-    {name:"Information Technology", _id:"2"},
-    {name:"Software Engineering", _id:"3"},
-    {name:"Data Science", _id:"4"},
-    {name:"Cyber Security", _id:"5"},
-    {name:"Artificial Intelligence", _id:"6"},
-    {name:"Web Development", _id:"7"},
-    {name:"Mobile Development", _id:"8"}
-  ]);
+  const [departments,setDepartements] = useState([]);
   const router = useRouter();
 
   const {register,checkAuth} = useAuthStore();
@@ -41,16 +32,57 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    register(formData);
-    router.push('/home');
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setErrorMsg("");
+  if (formData.username.length < 3) {
+    setErrorMsg("Username must be at least 3 characters long.");
+    return;
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    setErrorMsg("Please enter a valid email address.");
+    return;
+  }
+  if (formData.password.length < 8) {
+    setErrorMsg("Password must be at least 8 characters long.");
+    return;
+  }
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  if (!passwordRegex.test(formData.password)) {
+    setErrorMsg("Password must contain at least one uppercase letter, one lowercase letter, and one number.");
+    return;
+  }
+  if (formData.password !== confirmedPassword) {
+    setErrorMsg("Passwords do not match.");
+    return;
+  }
+  if (!formData.departmentId) {
+    setErrorMsg("Please select a department.");
+    return;
+  }
+  try {
+    await register(formData);
+    router.push("/home");
+  } catch (err) {
+    setErrorMsg(err.message);
+  }
+};
 
   useEffect(()=>{
     if(checkAuth()){
       router.push('/home');
+      return;
     }
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/student/getDepartments');
+        setDepartements(response.data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    }
+    fetchDepartments();
   },[])
 
   return (
@@ -134,7 +166,7 @@ export default function SignUp() {
               >
                 <option value="">Select your department</option>
                 {departments.map(dep=>{
-                  return <option key={dep._id} value={dep._id}>{dep.name}</option>
+                  return <option key={dep.id} value={dep.id}>{dep.name}</option>
                 })}
                 {/* <option value="Engineering">Engineering</option>
                 <option value="Business">Business</option>

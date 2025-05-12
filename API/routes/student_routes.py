@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from API.controllers.reports_controller import create_report
-from API.controllers.student_controller import update_student_bio, update_student_email_name
-from API.models.user_models import ReportUser, UserInUpdate, UserInUpdateBio
+from controllers.reports_controller import create_report
+from controllers.student_controller import update_student_bio, update_student_email_name
+from models.user_models import ReportUser, UserInUpdate, UserInUpdateBio
 from controllers.department_controller import get_departments_names_ids
 from controllers.course_controller import get_all_courses
 from controllers.enrollment_controller import get_enrolled_courses,enroll_user,unenroll_user,update_enrollment_progress

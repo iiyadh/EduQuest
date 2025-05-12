@@ -15,7 +15,7 @@ async def login(data: UserInLogin):
         return JSONResponse(content={"error": str(e)}, status_code=400)
     
 @router.post("/register")
-async def register(data: UserInRegister):
+async def register_user(data: UserInRegister):
     try:
         response = register(data)
         return JSONResponse(content=response, status_code=200)

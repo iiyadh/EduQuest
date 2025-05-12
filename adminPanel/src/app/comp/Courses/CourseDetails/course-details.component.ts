@@ -64,20 +64,21 @@ export class CourseDetailsComponent implements OnInit {
     });
   }
 
-  updateCourse(field: keyof Course, event: Event): void {
-    const element = event.target as HTMLElement;
-    (this.course as any)[field] = element.innerText;
-    this.apiService.updateCourse(
-      +this.course.id,
-      this.course.title,
-      this.course.description,
-      this.course.level,
-      this.course.duration
-    ).subscribe({
-      next: () => console.log('Course updated successfully'),
-      error: (error) => console.error('Error updating course:', error)
-    });
-  }
+updateCourse(field: keyof Course, event: Event): void {
+  const element = event.target as HTMLInputElement | HTMLSelectElement;
+  const value = element.value;
+  (this.course as any)[field] = value;
+  this.apiService.updateCourse(
+    +this.course.id,
+    this.course.title,
+    this.course.description,
+    this.course.level,
+    this.course.duration
+  ).subscribe({
+    next: () => console.log('Course updated successfully'),
+    error: (error) => console.error('Error updating course:', error)
+  });
+}
 
   updateModule(moduleIndex: number, field: keyof Module, event: Event): void {
     const element = event.target as HTMLElement;
@@ -114,15 +115,20 @@ export class CourseDetailsComponent implements OnInit {
     this.activeTab = 'write';
   }
 
-  addModule(): void {
-    this.apiService.createModule(+this.course.id).subscribe({
-      next: (createdModule) => {
-        this.course.modules.push(createdModule);
-        console.log('Module created successfully');
-      },
-      error: (error) => console.error('Error creating module:', error)
-    });
-  }
+addModule(): void {
+  this.apiService.createModule(+this.course.id).subscribe({
+    next: (createdModule) => {
+      if (!this.course.modules) {
+        this.course.modules = [];
+      }
+      // Ensure lessons array exists on the new module
+      createdModule.lessons = [];
+      this.course.modules.push(createdModule);
+      console.log('Module created successfully');
+    },
+    error: (error) => console.error('Error creating module:', error)
+  });
+}
 
   deleteModule(index: number): void {
     const moduleId = this.course.modules[index].id;

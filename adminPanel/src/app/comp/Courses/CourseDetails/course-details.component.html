@@ -9,7 +9,7 @@
   </div>
 
   <div class="course-meta">
-    <select (change)="updateCourse('level', $event)">
+    <select [(ngModel)]="course.level" (change)="updateCourse('level', $event)">
       <option [value]="'beginner'" [selected]="course.level === 'beginner'">Beginner</option>
       <option [value]="'intermediate'" [selected]="course.level === 'intermediate'">Intermediate</option>
       <option [value]="'advanced'" [selected]="course.level === 'advanced'">Advanced</option>

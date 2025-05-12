@@ -5,8 +5,15 @@ from DAO import course_dao, module_dao, lesson_dao
 # ----------------------------- COURSE HANDLERS -----------------------------
 
 def create_course():
-    new_id = course_dao.insert_course("Untitled", "Nothing", "Begainer", "0 week")
-    return {"id": new_id, "message": "Course created successfully"}
+    new_id = course_dao.insert_course("Untitled", "Nothing", "beginner", "0 week")
+
+    return {"course":{
+        "id": new_id,
+        "title": "Untitled",
+        "description": "Nothing",
+        "level": "beginner",
+        "duration": "0 week"
+    }, "message": "Course created successfully"}
 
 
 def get_all_courses():

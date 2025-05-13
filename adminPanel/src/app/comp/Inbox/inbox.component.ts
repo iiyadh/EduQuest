@@ -4,7 +4,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { EmailsService } from '../../services/emails.service';
+import { ApiService } from '../../services/api.service';
 
 interface Email {
   id: string;
@@ -13,6 +13,7 @@ interface Email {
   subject: string;
   content: string;
   read: boolean;
+  created_at:dateFns
 }
 
 @Component({
@@ -32,11 +33,15 @@ export class InboxComponent implements OnInit {
   emails: Email[] = [];
   selectedEmail: Email | null = null;
 
-  constructor(private emailsService:EmailsService) { }
+  constructor(private api:ApiService) { }
 
 
   loadEmails(): void {
-    this.emails = this.emailsService.getEmails();
+    this.api.getReports().subscribe((emails: Email[]) => {
+      this.emails = emails;
+      console.log(this.emails)
+    });
+
   }
 
   ngOnInit(): void {
@@ -44,7 +49,7 @@ export class InboxComponent implements OnInit {
   }
 
   handleRemoveReport(id: string) {
-    this.emailsService.deleteEmail(id);
+    this.api.deleteReport(+id);
     this.loadEmails();
   }
 

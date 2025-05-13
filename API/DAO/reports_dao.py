@@ -1,4 +1,5 @@
 from lib.db import get_cursor
+from DAO import student_dao
 
 def submit_report(user_id: int, subject: str, content: str):
     with get_cursor() as cursor:
@@ -34,11 +35,13 @@ def get_all_reports():
         result = []
         reports = cursor.fetchall()
         for report in reports:
+            print(report)
             report_dict = {
                 "id": report[0],
-                "title": report[1],
-                "content": report[2],
-                "created_at": report[3]
+                "email":student_dao.get_student_by_id(report[1])["email"],
+                "subject": report[2],
+                "content": report[3],
+                "created_at": report[5].strftime("%Y-%m-%d")
             }
             result.append(report_dict)
         return result
@@ -55,14 +58,6 @@ def get_report_by_id(report_id: int):
                 "created_at": report[3]
             }
         return None
-
-def insert_report(userId : int,title: str, content: str):
-    with get_cursor() as cursor:
-        cursor.execute(
-            "INSERT INTO reports (user_id,title, content) VALUES (%s,%s, %s) RETURNING id",
-            (userId , title , content)
-        )
-        return cursor.fetchone()[0]
 
 def delete_report_by_id(report_id: int):
     with get_cursor() as cursor:

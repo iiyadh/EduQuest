@@ -16,7 +16,7 @@ def delete_report(report_id: int):
 
 
 def create_report(user_id: int, subject: str, content: str):
-    report_id = reports_dao.insert_report(user_id, subject, content)
+    report_id = reports_dao.submit_report(user_id, subject, content)
     if not report_id:
         raise HTTPException(status_code=400, detail="Report creation failed")
     return {"message": "Report created successfully", "report_id": report_id}

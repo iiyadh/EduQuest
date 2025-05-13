@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Contact.module.css';
 import axios from 'axios';
+import  useAuthStore  from "../stores/authStore";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const ContactPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
+  const { user } = useAuthStore();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +32,11 @@ const ContactPage = () => {
     
     try {
       // Simulate API call
-      await axios.post("/adminreport",formData);
+      await axios.post("http://localhost:8000/student/report",{
+        user_id:user.user_id,
+        subject: formData.subject,
+        content: formData.content
+      });
       setSubmitMessage('Thank you for your message! We will get back to you soon.');
       setFormData({
         subject: '',

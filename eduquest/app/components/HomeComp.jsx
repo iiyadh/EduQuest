@@ -1,23 +1,24 @@
 "use client"
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import styles from "../styles/HomeContent.module.css"
 import useCoursesStore from "../stores/coursesStore"
+import useAuthStore from "../stores/authStore"
 
 const HomeComp = () => {
-  const { courses, fetchCourses, enrollInCourse, isEnrolled } = useCoursesStore();
-
+  const { courses, fetchCourses, enrollInCourse, isEnrolled, fetchEnrolledCourses } = useCoursesStore();
+  const { user } = useAuthStore();
   const [renderCourses, setRenderCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   
   useEffect(() => {
-    if(courses.length <=0){
-      fetchCourses();
+    fetchCourses();
+    if (user?.user_id) {
+      fetchEnrolledCourses(user.user_id);
     }
-  }, []);
+  }, [user?.user_id]);
   
-
   useEffect(() => {
-    if (!searchTerm || searchTerm.length < 1) {
+    if (!searchTerm) {
       setRenderCourses([...courses]);
       return;
     }
@@ -29,9 +30,10 @@ const HomeComp = () => {
     setRenderCourses(filteredCourses);
   }, [searchTerm, courses]);
 
-
   const handleEnroll = (courseId) => {
-    enrollInCourse(courseId);
+    if (user?.user_id) {
+      enrollInCourse(courseId, user.user_id);
+    }
   }
 
   return (
@@ -46,7 +48,7 @@ const HomeComp = () => {
             type="text"
             placeholder="Search courses..."
             value={searchTerm}
-            onChange={(e)=>setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.searchInput}
           />
           <svg className={styles.searchIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -61,10 +63,7 @@ const HomeComp = () => {
       ) : (
         <div className={styles.coursesGrid}>
           {renderCourses.map((course) => (
-            <div
-              key={course.id}
-              className={styles.courseCard}
-            >
+            <div key={course.id} className={styles.courseCard}>
               <div className={styles.courseContent}>
                 <div className={styles.courseHeader}>
                   <h3 className={styles.courseTitle}>{course.title}</h3>
@@ -72,13 +71,16 @@ const HomeComp = () => {
                     {course.level}
                   </span>
                 </div>
-                <p className={styles.courseCategory}>{course.category}</p>
                 <p className={styles.courseDescription}>{course.description}</p>
                 <div className={styles.courseDetails}>
-                  <span className={styles.courseDuration}> Duration : {course.duration}</span>
+                  <span className={styles.courseDuration}>Duration: {course.duration}</span>
                 </div>
-                {!(isEnrolled(course.id))? 
-                (<button className={styles.enrollButton} onClick={() => handleEnroll(course.id)}>
+                {!isEnrolled(course.id) ? 
+                (<button 
+                  className={styles.enrollButton} 
+                  onClick={() => handleEnroll(course.id)}
+                  disabled={!user?.user_id}
+                >
                   <svg className={styles.enrollIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2L2 7h20L12 2z"></path>
                     <path d="M2 17l10 5 10-5V7H2v10z"></path>

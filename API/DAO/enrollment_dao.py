@@ -23,11 +23,10 @@ def get_user_enrollments(user_id: int):
         enrollments = cursor.fetchall()
         for enrollment in enrollments:
             enrollment_dict = {
-                "id": enrollment[0],
-                "course_id": enrollment[1],
-                "user_id": enrollment[2],
-                "last_lesson_id": enrollment[3],
-                "last_activity_date": enrollment[4]
+                "course_id": enrollment[0],
+                "user_id": enrollment[1],
+                "last_lesson_id": enrollment[2],
+                "last_activity_date": enrollment[4].isoformat() if enrollment[4] else None
             }
             result.append(enrollment_dict)
         return result

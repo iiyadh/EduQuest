@@ -1,27 +1,34 @@
 "use client"
-import React from 'react';
-import  useCoursesStore  from '../stores/coursesStore';
+import React, { useEffect } from 'react';
+import useCoursesStore from '../stores/coursesStore';
 import styles from '../styles/Sidebar.module.css';
 import { useRouter } from 'next/navigation';
+import useAuthStore from '../stores/authStore';
 
 const Sidebar = () => {
-  const { enrolledCourses, courses,calculateProgress  } = useCoursesStore();
+  const { enrolledCourses, courses, calculateProgress, fetchEnrolledCourses, fetchCourses } = useCoursesStore();
   const router = useRouter();
+  const { user } = useAuthStore();
 
-  const enrolledCoursesWithProgress = enrolledCourses.map(courseId => {
-    const course = courses.find(c => c.id === courseId);
+  useEffect(() => {
+    if (user?.user_id) {
+      fetchCourses();
+      fetchEnrolledCourses(user.user_id);
+    }
+  }, [user?.user_id]);
+
+  const enrolledCoursesWithProgress = enrolledCourses.map(enrollment => {
+    const course = courses.find(c => c.id === enrollment.course_id);
     return {
       ...course,
-      progress: Math.round(calculateProgress(courseId)),
+      progress: calculateProgress(enrollment.course_id),
       nextLesson: course?.modules?.[0]?.lessons?.[0]?.title || "No lessons available"
     };
-  });
+  }).filter(course => course.id); // Filter out undefined courses
 
-  const handleGotoCourse = (id)=>{
-    console.log(id);
+  const handleGotoCourse = (id) => {
     router.push(`/course/${id}`);
   }
-
 
   return (
     <aside className={styles.sidebar}>
@@ -29,7 +36,7 @@ const Sidebar = () => {
         <h2 className={styles.sidebarTitle}>My Courses</h2>
         <ul className={styles.sidebarCourses}>
           {enrolledCoursesWithProgress.map(course => (
-            <li key={course.id} className={styles.sidebarCourseItem} onClick={()=>handleGotoCourse(course.id)}>
+            <li key={course.id} className={styles.sidebarCourseItem} onClick={() => handleGotoCourse(course.id)}>
               <div className={styles.courseInfo}>
                 <h3 className={styles.courseTitle}>{course.title}</h3>
               </div>

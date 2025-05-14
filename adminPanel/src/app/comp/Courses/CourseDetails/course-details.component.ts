@@ -65,9 +65,17 @@ export class CourseDetailsComponent implements OnInit {
   }
 
 updateCourse(field: keyof Course, event: Event): void {
-  const element = event.target as HTMLInputElement | HTMLSelectElement;
-  const value = element.value;
+  const target = event.target as HTMLElement;
+  let value: string;
+
+  if ('value' in target) {
+    value = (target as HTMLInputElement | HTMLSelectElement).value;
+  } else {
+    value = target.innerText.trim();
+  }
+
   (this.course as any)[field] = value;
+
   this.apiService.updateCourse(
     +this.course.id,
     this.course.title,

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import useAuthStore from '../stores/authStore';
 
 const Sidebar = () => {
-  const { enrolledCourses, courses, calculateProgress, fetchEnrolledCourses, fetchCourses } = useCoursesStore();
+  const { enrolledCourses, courses, calculateProgress, fetchEnrolledCourses, fetchCourses ,getNextLesson } = useCoursesStore();
   const router = useRouter();
   const { user } = useAuthStore();
 
@@ -18,11 +18,11 @@ const Sidebar = () => {
   }, [user?.user_id]);
 
   const enrolledCoursesWithProgress = enrolledCourses.map(enrollment => {
-    const course = courses.find(c => c.id === enrollment.course_id);
+    const course = courses.find(c => c.id == enrollment.course_id);
     return {
       ...course,
       progress: calculateProgress(enrollment.course_id),
-      nextLesson: course?.modules?.[0]?.lessons?.[0]?.title || "No lessons available"
+      nextLesson: getNextLesson(enrollment.course_id) || "No lessons available"
     };
   }).filter(course => course.id); // Filter out undefined courses
 

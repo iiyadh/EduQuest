@@ -65,13 +65,12 @@ const useCoursesStore = create((set, get) => ({
     const course = get().courses.find(c => c.id == course_id);
     if (!course) return 0;
 
-    let totalLessons = 0;
+    let totalLessons = course.modules.reduce((sum, module) => sum + module.lessons.length, 0);
     let completedLessons = 0;
     let foundLastLesson = !enrolledCourse.last_lesson_id;
 
     for (const module of course.modules) {
       for (const lesson of module.lessons) {
-        totalLessons++;
         if (enrolledCourse.last_lesson_id && lesson.id == enrolledCourse.last_lesson_id) {
           completedLessons++;
           foundLastLesson = true;
@@ -84,6 +83,26 @@ const useCoursesStore = create((set, get) => ({
     }
 
     return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  },
+
+  getNextLesson: (course_id) => {
+    const enrolledCourse = get().enrolledCourses.find(c => c.course_id == course_id);
+    if (!enrolledCourse) return null;
+
+    const course = get().courses.find(c => c.id == course_id);
+    if (!course) return null;
+
+    let foundLastLesson = false;
+    for (const module of course.modules) {
+      for (const lesson of module.lessons) {
+        if (foundLastLesson) {
+          return lesson.title;
+        } else if (lesson.id == enrolledCourse.last_lesson_id) {
+          foundLastLesson = true;
+        }
+      }
+    }
+    return null;
   },
 
   updateEnrollmentProgress: async (course_id, student_id, last_lesson_id) => {

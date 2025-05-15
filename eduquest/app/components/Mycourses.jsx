@@ -6,7 +6,7 @@ import Link from "next/link";
 import useAuthStore from "../stores/authStore";
 
 const EnrolledCourses = ({ setSection }) => {
-  const { enrolledCourses, courses, calculateProgress } = useCoursesStore();
+  const { enrolledCourses, courses, calculateProgress , getNextLesson } = useCoursesStore();
   const { user } = useAuthStore();
 
   const enrolledCoursesWithProgress = enrolledCourses.map(enrollment => {
@@ -14,8 +14,8 @@ const EnrolledCourses = ({ setSection }) => {
     return {
       ...course,
       progress: calculateProgress(enrollment.course_id),
-      nextLesson: course?.modules?.[0]?.lessons?.[0]?.title || "No lessons available",
-      lastAccessed: new Date(enrollment.enrollment_date).toLocaleDateString()
+      nextLesson: getNextLesson(enrollment.course_id) || "No lessons available",
+      lastAccessed: new Date(enrollment.last_activity_date).toLocaleDateString()
     };
   }).filter(course => course.id); // Filter out undefined courses
 

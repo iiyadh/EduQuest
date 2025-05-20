@@ -5,7 +5,7 @@ import useCoursesStore from "../stores/coursesStore"
 import useAuthStore from "../stores/authStore"
 
 const HomeComp = () => {
-  const { courses, fetchCourses, enrollInCourse, isEnrolled, fetchEnrolledCourses } = useCoursesStore();
+  const { courses, fetchCourses, enrollInCourse, isEnrolled, fetchEnrolledCourses,isFavorite,fetchFavoriteCourses,addToFavorites,removeFromFavorites } = useCoursesStore();
   const { user } = useAuthStore();
   const [renderCourses, setRenderCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +14,7 @@ const HomeComp = () => {
     fetchCourses();
     if (user?.user_id) {
       fetchEnrolledCourses(user.user_id);
+      fetchFavoriteCourses(user.user_id);
     }
   }, [user?.user_id]);
   
@@ -33,6 +34,20 @@ const HomeComp = () => {
   const handleEnroll = (courseId) => {
     if (user?.user_id) {
       enrollInCourse(courseId, user.user_id);
+    }
+  }
+
+  const handleFav = (courseId) => {
+    if (user?.user_id) {
+      console.log(courseId);
+      addToFavorites(courseId, user.user_id);
+    }
+  }
+
+  const handleUnFav = (courseId) => {
+    if (user?.user_id) {
+      console.log(courseId, user.user_id);
+      removeFromFavorites(courseId, user.user_id);
     }
   }
 
@@ -64,6 +79,7 @@ const HomeComp = () => {
         <div className={styles.coursesGrid}>
           {renderCourses.map((course) => (
             <div key={course.id} className={styles.courseCard}>
+              {isFavorite(course.id) ? (<span className={styles.unfav} onClick={()=>handleUnFav(course.id)}>★</span>) : (<span className={styles.fav} onClick={()=>handleFav(course.id)}>☆</span>)}
               <div className={styles.courseContent}>
                 <div className={styles.courseHeader}>
                   <h3 className={styles.courseTitle}>{course.title}</h3>

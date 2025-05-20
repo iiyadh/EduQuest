@@ -7,6 +7,7 @@ const useCoursesStore = create((set, get) => ({
   enrolledCourses: [],
   isLoading: false,
   error: null,
+  favoriteCourses: [],
 
   fetchCourses: async () => {
     set({ isLoading: true, error: null });
@@ -17,6 +18,58 @@ const useCoursesStore = create((set, get) => ({
       console.error("Error fetching courses:", error);
       set({ error: "Failed to load courses", isLoading: false });
     }
+  },
+
+  fetchFavoriteCourses: async (student_id) => {
+    set({ isLoading: true, error: null });
+    try{
+      const res = await axios.get(`http://localhost:8080/api/favorites/${student_id}`);
+      set({ favoriteCourses: res.data, isLoading: false });
+      console.log(get().favoriteCourses);
+    }catch(err){
+      console.error("Error fetching favorite courses:", err);
+    }
+  },
+
+  addToFavorites: async (course_id, student_id) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const payload = {
+        id: Math.floor(Math.random() * 1000000) + 1,
+        userId: student_id,
+        courseId: course_id,
+        addedAt: new Date().toISOString(),
+      };
+
+      const response = await axios.post('http://localhost:8080/api/favorites', payload);
+
+      console.log("Favorite added:", response.data);
+
+      // Refresh favorites
+      await get().fetchFavoriteCourses(student_id);
+
+      set({ isLoading: false });
+    } catch (error) {
+      console.error("Error adding to favorites:", error.message || error);
+      set({ error: "Failed to add to favorites", isLoading: false });
+    }
+  },
+
+  removeFromFavorites: async (course_id, student_id) => {
+    set({ isLoading: true });
+    try {
+      await axios.delete(`http://localhost:8080/api/favorites/${student_id}/${course_id}`, { data: { course_id } });
+      await get().fetchFavoriteCourses(student_id);
+      set({ isLoading: false });
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+      set({ error: "Failed to remove from favorites", isLoading: false });
+    }
+  },
+
+  isFavorite: (course_id) => {
+    return get().favoriteCourses.some(course => course.courseId == course_id);
   },
 
   fetchEnrolledCourses: async (student_id) => {

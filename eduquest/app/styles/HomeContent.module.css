@@ -189,4 +189,49 @@
         font-size: 14px;
         color: #666;
     }
-  
+  .fav{
+    color: #4361ee;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    top:10px;
+    left: 10px;
+    width: 100%;
+    justify-self: flex-end;
+  }
+  .fav:hover:before{
+    content: "Add to Favourites";
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 12px;
+    background-color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+  }
+
+  .unfav{
+    color: #4361ee;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    top:10px;
+    left: 10px;
+    width: 100%;
+    justify-self: flex-end;
+  }
+
+  .unfav:hover:before{
+    content: "Remove from Favourites";
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 12px;
+    background-color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+  }

@@ -16,7 +16,7 @@ class SummaryResponse(BaseModel):
 # Route
 router = APIRouter()
 
-@router.get("/books/summary/{book_id}", response_model=SummaryResponse)
+@router.get("/{book_id}", response_model=SummaryResponse)
 def generate_book_summary(book_id: int):
 
     book = get_book_by_id(book_id)

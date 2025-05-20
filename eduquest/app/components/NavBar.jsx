@@ -9,6 +9,7 @@ import LogoutIcon from '../../public/logout-svgrepo-com.svg';
 import useAuthStore from '../stores/authStore';
 import { useRouter } from 'next/navigation';
 import  favIcon  from '../../public/star.png';
+import bookicon from '../../public/book.png';
 
 const Navbar = ({setSection})=>{
 
@@ -46,6 +47,12 @@ const Navbar = ({setSection})=>{
                 <button onClick={()=>setSection("fav")} className={styles.navLink}>
                   <Image src={favIcon} alt="Fav" className='icons' width={20} height={20} />
                   Favorites
+                </button>
+              </li>
+              <li>
+                <button onClick={()=>setSection("books")} className={styles.navLink}>
+                  <Image src={bookicon} alt="book" className='icons' width={20} height={20} />
+                  Books
                 </button>
               </li>
               <li>

@@ -4,6 +4,7 @@ import ContactPage from './Contact';
 import ProfilePage from './Profile';
 import HomeComp from './HomeComp';
 import EnrolledCourses from './Mycourses';
+import FavoritesComp from './FavoritesComp';
 import StudyImg from '../../public/image.png';
 import Image from 'next/image';
 
@@ -51,7 +52,8 @@ const Content = ({section , setSection}) => {
         {section === "profile" && (<ProfilePage />)}
         {section === "home" && (<HomeComp/>)}
         {section === "mycourses" && <EnrolledCourses setSection={setSection}/>}
-        {section && !["contact", "profile", "home","mycourses"].includes(section) && <CourseContent section={section}/>}
+        {section === "fav" && <FavoritesComp setSection={setSection}/>}
+        {section && !["contact", "profile", "home","mycourses","fav"].includes(section) && <CourseContent section={section}/>}
         </>
       );
 };

@@ -97,7 +97,18 @@ def create_tables_if_not_exist():
                 read BOOLEAN DEFAULT FALSE,
                 date DATE DEFAULT CURRENT_DATE
             );
-        """
+        """,
+        "recommended_books": """
+            CREATE TABLE recommended_books (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                price DECIMAL(10, 2) NOT NULL,
+                category VARCHAR(100) NOT NULL,
+                availability VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                img_url VARCHAR(255)
+            );
+        """,
     }
 
     for table_name, sql in tables_sql.items():

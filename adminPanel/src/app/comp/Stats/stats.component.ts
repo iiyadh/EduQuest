@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { Chart, registerables, ChartType, ChartConfiguration } from 'chart.js';
-import { StatsService ,ChartData } from '../../services/stats.service';
+import { StatsService, ChartData } from '../../services/stats.service';
 
 Chart.register(...registerables);
 
@@ -13,16 +13,12 @@ Chart.register(...registerables);
   templateUrl: './stats.component.html',
   styleUrls: ['./stats.component.scss']
 })
-
-
 export class StatsComponent implements OnInit {
+  constructor(private statsService: StatsService) { }
 
-    constructor(private statsService:StatsService) { }
-
-  deptChartData!:ChartData;
-  courseChartData !:ChartData;
-  passFailChartData !:ChartData; 
-
+  deptChartData: ChartData | null = null;
+  courseChartData: ChartData | null = null;
+  passFailChartData: ChartData | null = null;
 
   chartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -49,9 +45,17 @@ export class StatsComponent implements OnInit {
     this.loadStats();
   }
 
-  loadStats(){
-    this.deptChartData = this.statsService.getDeptChartData();
-    this.courseChartData = this.statsService.getCourseChartData();
-    this.passFailChartData = this.statsService.getPassFailChartData();
+  loadStats(): void {
+    this.statsService.getDeptChartData().subscribe(data => {
+      this.deptChartData = data;
+    });
+
+    this.statsService.getCourseChartData().subscribe(data => {
+      this.courseChartData = data;
+    });
+
+    this.statsService.getPassFailChartData().subscribe(data => {
+      this.passFailChartData = data;
+    });
   }
 }

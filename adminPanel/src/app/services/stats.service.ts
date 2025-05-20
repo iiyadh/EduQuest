@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface ChartData {
     labels: string[];
@@ -11,92 +14,89 @@ export interface ChartData {
     }[];
 }
 
-interface Stat{
-    lables:string[];
-    data:number[];
+interface Stat {
+    labels: string[];
+    data: number[];
 }
 
 @Injectable({
     providedIn: 'root',
 })
 export class StatsService {
-    constructor() {}
+    constructor(private http: HttpClient) {}
 
-    deptData :Stat = {
-        lables: ['Computer Science', 'Engineering', 'Business', 'Medicine'],
-        data: [120, 85, 92, 65],
-    };
-    courseData :Stat = {
-        lables: ['Programming 101', 'Data Structures', 'Calculus', 'Marketing', 'Anatomy'],
-        data: [75, 60, 45, 55, 40],
-    };
+    private departmentColors = [
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+    ];
 
-    passFailData :Stat = {
-        lables: ['Completed', 'Incomplete'],
-        data: [85, 15],
-    };
+    private courseColors = [
+        'rgba(255, 159, 64, 0.7)',
+        'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 205, 86, 0.7)',
+        'rgba(201, 203, 207, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+    ];
 
-    getDeptChartData(): ChartData {
-        return {
-            labels: this.deptData.lables,
-            datasets: [
-                {
+    private completionColors = [
+        'rgba(75, 192, 192, 0.7)',
+        'rgba(255, 99, 132, 0.7)',
+    ];
+
+    getDepartmentStats(): Observable<Stat> {
+        return this.http.get<Stat>('http://localhost:8000/stats/department');
+    }
+
+    getCourseStats(): Observable<Stat> {
+        return this.http.get<Stat>('http://localhost:8000/stats/courses');
+    }
+
+    getCompletionStats(): Observable<Stat> {
+        return this.http.get<Stat>('http://localhost:8000/stats/completion');
+    }
+
+    getDeptChartData(): Observable<ChartData> {
+        return this.getDepartmentStats().pipe(
+            map(data => ({
+                labels: data.labels,
+                datasets: [{
                     label: 'Students',
-                    data: this.deptData.data,
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                    ],
-                    borderColor: [
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                    ],
+                    data: data.data,
+                    backgroundColor: this.departmentColors,
+                    borderColor: this.departmentColors.map(color => color.replace('0.7', '1')),
                     borderWidth: 1,
-                },
-            ],
-        };
+                }],
+            }))
+        );
     }
 
-    getCourseChartData(): ChartData {
-        return {
-            labels: this.courseData.lables,
-            datasets: [
-                {
-                    data: this.courseData.data,
-                    backgroundColor: [
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 205, 86, 0.7)',
-                        'rgba(201, 203, 207, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                    ],
+    getCourseChartData(): Observable<ChartData> {
+        return this.getCourseStats().pipe(
+            map(data => ({
+                labels: data.labels,
+                datasets: [{
+                    data: data.data,
+                    backgroundColor: this.courseColors,
+                    borderColor: this.courseColors.map(color => color.replace('0.7', '1')),
                     borderWidth: 1,
-                },
-            ],
-        };
+                }],
+            }))
+        );
     }
 
-    getPassFailChartData(): ChartData {
-        return {
-            labels: this.passFailData.lables,
-            datasets: [
-                {
-                    data: this.passFailData.data,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)',
-                    ],
+    getPassFailChartData(): Observable<ChartData> {
+        return this.getCompletionStats().pipe(
+            map(data => ({
+                labels: data.labels,
+                datasets: [{
+                    data: data.data,
+                    backgroundColor: this.completionColors,
+                    borderColor: this.completionColors.map(color => color.replace('0.7', '1')),
                     borderWidth: 1,
-                },
-            ],
-        };
+                }],
+            }))
+        );
     }
 }
